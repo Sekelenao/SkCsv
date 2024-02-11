@@ -735,6 +735,7 @@ final class CsvRowTest {
         void iterator() {
             var row = helloWorldRow();
             var it = row.iterator();
+            var emptyIt = new CsvRow().iterator();
             assertAll("Iterator is working",
                     () -> assertTrue(it.hasNext()),
                     () -> assertTrue(it.hasNext()),
@@ -744,7 +745,8 @@ final class CsvRowTest {
                         }
                     },
                     () -> assertFalse(it::hasNext),
-                    () -> assertThrows(NoSuchElementException.class, it::next)
+                    () -> assertThrows(NoSuchElementException.class, it::next),
+                    () -> assertFalse(emptyIt.hasNext())
             );
         }
 
@@ -789,6 +791,37 @@ final class CsvRowTest {
             var it = row.iterator();
             row.remove(0);
             assertThrows(ConcurrentModificationException.class, it::next);
+        }
+
+        @Test
+        @DisplayName("List Iterator is working")
+        void listIterator() {
+            var row = helloWorldRow();
+            var it = row.listIterator();
+            var emptyIt = new CsvRow().listIterator();
+            assertAll("List Iterator is working",
+                    () -> assertEquals(-1, it.previousIndex()),
+                    () -> assertEquals(0, it.nextIndex()),
+                    () -> assertTrue(it.hasNext()),
+                    () -> assertTrue(it.hasNext()),
+                    () -> {
+                        for (int i = 0; it.hasNext(); i++) {
+                            assertEquals(i, it.nextIndex());
+                            assertEquals(row.get(i), it.next());
+                            assertEquals(i, it.previousIndex());
+                        }
+                    },
+                    () -> assertFalse(it::hasNext),
+                    () -> assertThrows(NoSuchElementException.class, it::next),
+                    () -> assertFalse(emptyIt.hasNext()),
+                    () -> {
+                        for (int i = row.size() - 1; it.hasPrevious(); i--) {
+                            assertEquals(i, it.previousIndex());
+                            assertEquals(row.get(i), it.previous());
+                            assertEquals(i, it.nextIndex());
+                        }
+                    }
+            );
         }
 
     }
