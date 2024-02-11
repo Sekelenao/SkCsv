@@ -846,6 +846,22 @@ final class CsvRowTest {
             );
         }
 
+        @Test
+        @DisplayName("Iterator for each remaining is working")
+        void listIteratorForEachRemaining() {
+            var lst = new ArrayList<String>();
+            var row = helloWorldRow();
+            var it = row.listIterator();
+            it.next();
+            it.forEachRemaining(lst::add);
+            assertAll("For each remaining working",
+                    () -> assertEquals(2, lst.size()),
+                    () -> assertEquals("world!", String.join("", lst))
+            );
+        }
+
+
+
     }
 
     @Nested
