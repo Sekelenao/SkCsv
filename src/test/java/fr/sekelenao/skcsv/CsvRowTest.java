@@ -915,6 +915,45 @@ final class CsvRowTest {
             assertThrows(InvalidCsvValueException.class, () -> it.set(wrongString));
         }
 
+        @Test
+        @DisplayName("List iterator add")
+        void addListIterator(){
+            var row = helloWorldRow();
+            var it = row.listIterator();
+            it.add("beforeAll");
+            assertAll("List iterator add",
+                    () -> {
+                        for (int i = 0; it.hasNext(); i++) {
+                            if (i == 1) {
+                                it.add("1");
+                                it.add("2");
+                            }
+                            it.next();
+                        }
+                        it.add("afterAll");
+                    },
+                    () -> assertEquals(7, row.size()),
+                    () -> assertEquals("beforeAll;Hello;1;2;world;!;afterAll", row.toString())
+            );
+        }
+
+        @Test
+        @DisplayName("List iterator set null assertions")
+        void listIteratorAddNullAssertions(){
+            var row = helloWorldRow();
+            var it = row.listIterator();
+            assertThrows(NullPointerException.class, () -> it.add(null));
+        }
+
+        @ParameterizedTest
+        @MethodSource("escapeStringsProvider")
+        @DisplayName("List iterator set value assertions")
+        void listIteratorAddValueAssertions(String wrongString){
+            var row = helloWorldRow();
+            var it = row.listIterator();
+            assertThrows(InvalidCsvValueException.class, () -> it.add(wrongString));
+        }
+
     }
 
     @Nested
