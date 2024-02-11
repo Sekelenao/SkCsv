@@ -14,17 +14,15 @@ public class CsvRow implements Iterable<String> {
 
     private final List<String> cells;
 
-    private RowConfiguration config;
+    private RowConfiguration config = RowConfiguration.SEMICOLON;
 
     public CsvRow() {
         this.cells = new LinkedList<>();
-        this.config = RowConfiguration.DEFAULT;
     }
 
     public CsvRow(int size){
         SkAssertions.positive(size);
         this.cells = new LinkedList<>();
-        this.config = RowConfiguration.DEFAULT;
         fill(size);
     }
 
@@ -36,7 +34,6 @@ public class CsvRow implements Iterable<String> {
             SkAssertions.conformValue(value);
             cells.addLast(value);
         }
-        this.config = RowConfiguration.DEFAULT;
     }
 
     public CsvRow(Iterable<String> iterable) {
@@ -47,12 +44,15 @@ public class CsvRow implements Iterable<String> {
             SkAssertions.conformValue(value);
             cells.addLast(value);
         }
-        this.config = RowConfiguration.DEFAULT;
     }
 
     public CsvRow configure(RowConfiguration config) {
         this.config = Objects.requireNonNull(config);
         return this;
+    }
+
+    public RowConfiguration configuration(){
+        return config;
     }
 
     public static CsvRow from(String text, RowConfiguration config) {
@@ -64,7 +64,7 @@ public class CsvRow implements Iterable<String> {
 
     public static CsvRow from(String text) {
         Objects.requireNonNull(text);
-        return from(text, RowConfiguration.DEFAULT);
+        return from(text, RowConfiguration.SEMICOLON);
     }
 
     public int size() {
@@ -160,6 +160,67 @@ public class CsvRow implements Iterable<String> {
     @Override
     public Iterator<String> iterator() {
         return cells.iterator();
+    }
+
+    public ListIterator<String> listIterator(){
+        return new ListIterator<>() {
+
+            private final ListIterator<String> it = cells.listIterator();
+
+            @Override
+            public boolean hasNext() {
+                return it.hasNext();
+            }
+
+            @Override
+            public String next() {
+                if (!hasNext())
+                    throw new NoSuchElementException();
+                return it.next();
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return it.hasPrevious();
+            }
+
+            @Override
+            public String previous() {
+                if(!hasPrevious())
+                    throw new NoSuchElementException();
+                return it.previous();
+            }
+
+            @Override
+            public int nextIndex() {
+                return it.nextIndex();
+            }
+
+            @Override
+            public int previousIndex() {
+                return it.previousIndex();
+            }
+
+            @Override
+            public void remove() {
+                it.remove();
+            }
+
+            @Override
+            public void set(String string) {
+                Objects.requireNonNull(string);
+                SkAssertions.conformValue(string);
+                it.set(string);
+            }
+
+            @Override
+            public void add(String string) {
+                Objects.requireNonNull(string);
+                SkAssertions.conformValue(string);
+                it.add(string);
+            }
+
+        };
     }
 
     public Stream<String> stream() {
