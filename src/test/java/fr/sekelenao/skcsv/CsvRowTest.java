@@ -427,10 +427,13 @@ final class CsvRowTest {
             row.addAll(row.size(), List.of("(", "and Meta-verse", ")"));
             var row2 = row.copy();
             row2.addAll(row2.size(), Collections.emptyList());
+            var row3 = row.copy();
+            row3.addAll(row3.size(), "(", "and Meta-verse", ")");
             assertAll("Add all at end",
                     () -> assertEquals(6, row.size()),
                     () -> assertEquals("Hello;world;!;(;and Meta-verse;)", row.toString()),
-                    () -> assertEquals("Hello;world;!;(;and Meta-verse;)", row2.toString())
+                    () -> assertEquals("Hello;world;!;(;and Meta-verse;)", row2.toString()),
+                    () -> assertEquals("Hello;world;!;(;and Meta-verse;);(;and Meta-verse;)", row3.toString())
             );
         }
 
@@ -439,9 +442,13 @@ final class CsvRowTest {
         void addAllAtStart() {
             var row = helloWorldRow();
             row.addAll(0, List.of("(", "and Meta-verse", ")"));
+            var row2 = helloWorldRow();
+            row2.addAll(0, "(", "and Meta-verse", ")");
             assertAll("Add all at start",
                     () -> assertEquals(6, row.size()),
-                    () -> assertEquals("(;and Meta-verse;);Hello;world;!", row.toString())
+                    () -> assertEquals("(;and Meta-verse;);Hello;world;!", row.toString()),
+                    () -> assertEquals(6, row2.size()),
+                    () -> assertEquals("(;and Meta-verse;);Hello;world;!", row2.toString())
             );
         }
 
@@ -450,9 +457,13 @@ final class CsvRowTest {
         void addAll() {
             var row = helloWorldRow();
             row.addAll(2, List.of("(", "and Meta-verse", ")"));
+            var row2 = helloWorldRow();
+            row2.addAll(2, "(", "and Meta-verse", ")");
             assertAll("Add all",
                     () -> assertEquals(6, row.size()),
-                    () -> assertEquals("Hello;world;(;and Meta-verse;);!", row.toString())
+                    () -> assertEquals("Hello;world;(;and Meta-verse;);!", row.toString()),
+                    () -> assertEquals(6, row2.size()),
+                    () -> assertEquals("Hello;world;(;and Meta-verse;);!", row2.toString())
             );
         }
 
@@ -462,7 +473,8 @@ final class CsvRowTest {
             var emptyRow = new CsvRow();
             var lst = Collections.singleton((String) null);
             assertAll("Add all null",
-                    () -> assertThrows(NullPointerException.class, () -> emptyRow.addAll(0, null)),
+                    () -> assertThrows(NullPointerException.class, () -> emptyRow.addAll(0, (Iterable<String>) null)),
+                    () -> assertThrows(NullPointerException.class, () -> emptyRow.addAll(0, (String[]) null)),
                     () -> assertThrows(NullPointerException.class, () -> emptyRow.addAll(0, lst))
             );
         }
@@ -473,7 +485,10 @@ final class CsvRowTest {
         void addAllPositionAssertions(int index) {
             var row = helloWorldRow();
             var lst = new ArrayList<String>();
-            assertThrows(IndexOutOfBoundsException.class, () -> row.addAll(index, lst));
+            assertAll("Add all position assertions",
+                    () -> assertThrows(IndexOutOfBoundsException.class, () -> row.addAll(index, lst)),
+                    () -> assertThrows(IndexOutOfBoundsException.class, () -> row.addAll(index, ""))
+            );
         }
 
         @ParameterizedTest
@@ -482,10 +497,13 @@ final class CsvRowTest {
         void addAllWrongValues(char wrongChar) {
             var row = helloWorldRow();
             var lst = Collections.singleton("He" + wrongChar + "llo");
+            var array = new String[]{"He" + wrongChar + "llo"};
             for (int i = 0; i < 4; i++) {
                 int finalI = i;
-                assertThrows(InvalidCsvValueException.class, () -> row
-                        .addAll(finalI, lst));
+                assertAll("Add all wrong values",
+                        () -> assertThrows(InvalidCsvValueException.class, () -> row.addAll(finalI, lst)),
+                        () -> assertThrows(InvalidCsvValueException.class, () -> row.addAll(finalI, array))
+                );
             }
 
         }

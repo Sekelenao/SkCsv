@@ -95,21 +95,40 @@ public class CsvRow implements Iterable<String> {
         cells.add(position, value);
     }
 
+    public void addAll(int position, String... values){
+        SkAssertions.validPosition(position, cells.size());
+        Objects.requireNonNull(values);
+        if(position == cells.size()){
+            for(var value: values){
+                Objects.requireNonNull(value);
+                SkAssertions.conformValue(value);
+                this.addLast(value);
+            }
+        } else {
+            var it = cells.listIterator(position);
+            for(var value: values){
+                Objects.requireNonNull(value);
+                SkAssertions.conformValue(value);
+                it.add(value);
+            }
+        }
+    }
+
     public void addAll(int position, Iterable<String> values){
         SkAssertions.validPosition(position, cells.size());
         Objects.requireNonNull(values);
         if(position == cells.size()){
-            values.forEach(v -> {
-                Objects.requireNonNull(v);
-                SkAssertions.conformValue(v);
-                this.addLast(v);
+            values.forEach(value -> {
+                Objects.requireNonNull(value);
+                SkAssertions.conformValue(value);
+                this.addLast(value);
             });
         } else {
             var it = cells.listIterator(position);
-            values.forEach(v -> {
-                Objects.requireNonNull(v);
-                SkAssertions.conformValue(v);
-                it.add(v);
+            values.forEach(value -> {
+                Objects.requireNonNull(value);
+                SkAssertions.conformValue(value);
+                it.add(value);
             });
         }
     }
