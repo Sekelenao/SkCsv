@@ -860,7 +860,14 @@ final class CsvRowTest {
             );
         }
 
-
+        @Test
+        @DisplayName("Iterator concurrent modifications")
+        void listIteratorConcurrentModifications() {
+            var row = helloWorldRow();
+            var it = row.listIterator();
+            row.remove(0);
+            assertThrows(ConcurrentModificationException.class, it::next);
+        }
 
     }
 
