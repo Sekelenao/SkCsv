@@ -12,7 +12,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -827,7 +826,8 @@ final class CsvRowTest {
                             assertEquals(row.get(i), it.previous());
                             assertEquals(i, it.nextIndex());
                         }
-                    }
+                    },
+                    () -> assertThrows(NoSuchElementException.class, it::previous)
             );
         }
 
@@ -877,7 +877,7 @@ final class CsvRowTest {
 
         @Test
         @DisplayName("List iterator set")
-        void setListIterator(){
+        void setListIterator() {
             var row = helloWorldRow();
             var it = row.listIterator();
             assertAll("List iterator set",
@@ -898,7 +898,7 @@ final class CsvRowTest {
 
         @Test
         @DisplayName("List iterator set null assertions")
-        void listIteratorSetNullAssertions(){
+        void listIteratorSetNullAssertions() {
             var row = helloWorldRow();
             var it = row.listIterator();
             it.next();
@@ -908,7 +908,7 @@ final class CsvRowTest {
         @ParameterizedTest
         @MethodSource("escapeStringsProvider")
         @DisplayName("List iterator set value assertions")
-        void listIteratorSetValueAssertions(String wrongString){
+        void listIteratorSetValueAssertions(String wrongString) {
             var row = helloWorldRow();
             var it = row.listIterator();
             it.next();
@@ -917,7 +917,7 @@ final class CsvRowTest {
 
         @Test
         @DisplayName("List iterator add")
-        void addListIterator(){
+        void addListIterator() {
             var row = helloWorldRow();
             var it = row.listIterator();
             it.add("beforeAll");
@@ -939,7 +939,7 @@ final class CsvRowTest {
 
         @Test
         @DisplayName("List iterator set null assertions")
-        void listIteratorAddNullAssertions(){
+        void listIteratorAddNullAssertions() {
             var row = helloWorldRow();
             var it = row.listIterator();
             assertThrows(NullPointerException.class, () -> it.add(null));
@@ -948,7 +948,7 @@ final class CsvRowTest {
         @ParameterizedTest
         @MethodSource("escapeStringsProvider")
         @DisplayName("List iterator set value assertions")
-        void listIteratorAddValueAssertions(String wrongString){
+        void listIteratorAddValueAssertions(String wrongString) {
             var row = helloWorldRow();
             var it = row.listIterator();
             assertThrows(InvalidCsvValueException.class, () -> it.add(wrongString));
