@@ -718,6 +718,10 @@ final class CsvRowTest {
     @DisplayName("Iterable")
     final class IterableTest {
 
+        static Stream<String> escapeStringsProvider() {
+            return Stream.of("Hello\n", "w\0rld", "I\r", "love\b", "\fJava !");
+        }
+
         @Test
         @DisplayName("For each loop is working")
         void iterableFor() {
@@ -795,14 +799,16 @@ final class CsvRowTest {
         }
 
         @Test
-        @DisplayName("List Iterator is working")
+        @DisplayName("List iterator is working")
         void listIterator() {
             var row = helloWorldRow();
             var it = row.listIterator();
             var emptyIt = new CsvRow().listIterator();
-            assertAll("List Iterator is working",
+            assertAll("List iterator is working",
                     () -> assertEquals(-1, it.previousIndex()),
                     () -> assertEquals(0, it.nextIndex()),
+                    () -> assertFalse(it.hasPrevious()),
+                    () -> assertFalse(it.hasPrevious()),
                     () -> assertTrue(it.hasNext()),
                     () -> assertTrue(it.hasNext()),
                     () -> {
@@ -830,7 +836,7 @@ final class CsvRowTest {
         void listIteratorRemove() {
             var row = helloWorldRow();
             var it = row.listIterator();
-            assertAll("Iterator remove",
+            assertAll("List iterator remove",
                     () -> assertThrows(IllegalStateException.class, it::remove),
                     () -> {
                         for (int i = 0; it.hasNext(); i++) {
@@ -861,12 +867,52 @@ final class CsvRowTest {
         }
 
         @Test
-        @DisplayName("Iterator concurrent modifications")
+        @DisplayName("List iterator concurrent modifications")
         void listIteratorConcurrentModifications() {
             var row = helloWorldRow();
             var it = row.listIterator();
             row.remove(0);
             assertThrows(ConcurrentModificationException.class, it::next);
+        }
+
+        @Test
+        @DisplayName("List iterator set")
+        void setListIterator(){
+            var row = helloWorldRow();
+            var it = row.listIterator();
+            assertAll("List iterator set",
+                    () -> assertThrows(IllegalStateException.class, () -> it.set("")),
+                    () -> {
+                        for (int i = 0; it.hasNext(); i++) {
+                            if (i == 1) {
+                                it.set("w0rld");
+                                it.set("Hell0");
+                            }
+                            it.next();
+                        }
+                    },
+                    () -> assertEquals(3, row.size()),
+                    () -> assertEquals("Hell0;world;!", row.toString())
+            );
+        }
+
+        @Test
+        @DisplayName("List iterator set null assertions")
+        void listIteratorSetNullAssertions(){
+            var row = helloWorldRow();
+            var it = row.listIterator();
+            it.next();
+            assertThrows(NullPointerException.class, () -> it.set(null));
+        }
+
+        @ParameterizedTest
+        @MethodSource("escapeStringsProvider")
+        @DisplayName("List iterator set value assertions")
+        void listIteratorSetValueAssertions(String wrongString){
+            var row = helloWorldRow();
+            var it = row.listIterator();
+            it.next();
+            assertThrows(InvalidCsvValueException.class, () -> it.set(wrongString));
         }
 
     }
