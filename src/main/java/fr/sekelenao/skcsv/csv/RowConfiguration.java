@@ -2,7 +2,9 @@ package fr.sekelenao.skcsv.csv;
 
 public record RowConfiguration(char delimiter, char quote) {
 
-    public static final RowConfiguration DEFAULT = new RowConfiguration(';', '"');
+    public static final RowConfiguration SEMICOLON = new RowConfiguration(';', '"');
+
+    public static final RowConfiguration COMMA = new RowConfiguration(',', '"');
 
     public RowConfiguration {
         SkAssertions.validChar(quote);
