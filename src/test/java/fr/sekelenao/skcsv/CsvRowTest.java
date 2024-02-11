@@ -126,13 +126,14 @@ final class CsvRowTest {
         @MethodSource("escapeStringsProvider")
         @DisplayName("Iterable constructor values assertions")
         void byIterableAssertions(String wrongString) {
-            assertThrows(InvalidCsvValueException.class, () -> new CsvRow(List.of(wrongString)));
+            var lst = List.of(wrongString);
+            assertThrows(InvalidCsvValueException.class, () -> new CsvRow(lst));
         }
 
     }
 
     @Nested
-    final class Configure {
+    final class Configuration {
 
         static Stream<Character> escapeCharsProvider() {
             return Stream.of('\n', '\0', '\r', '\b', '\f');
@@ -153,7 +154,7 @@ final class CsvRowTest {
         void configureSimple() {
             var row = new CsvRow("Hello;", "world !");
             assertEquals("\"Hello;\";world !", row.toString());
-            row.configure(RowConfiguration.DEFAULT);
+            row.configure(RowConfiguration.SEMICOLON);
             assertEquals("\"Hello;\";world !", row.toString());
             row.configure(new RowConfiguration(',', '"'));
             assertEquals("Hello;,world !", row.toString());
@@ -172,19 +173,32 @@ final class CsvRowTest {
 
         @Test
         @DisplayName("Configuration null assertions")
-        void configurationAssertions() {
-            assertThrows(NullPointerException.class, () -> new CsvRow().configure(null));
+        void configureAssertions() {
+            var emptyRow = new CsvRow();
+            assertThrows(NullPointerException.class, () -> emptyRow.configure(null));
         }
 
         @ParameterizedTest
         @MethodSource("escapeCharsProvider")
         @DisplayName("Configuration args assertions")
-        void configurationAssertions(char wrongChar) {
+        void configureAssertions(char wrongChar) {
             assertAll("escape chars",
                     () -> assertThrows(InvalidCsvValueException.class, () -> new RowConfiguration(wrongChar, ',')),
                     () -> assertThrows(InvalidCsvValueException.class, () -> new RowConfiguration(',', wrongChar)),
                     () -> assertThrows(InvalidCsvValueException.class, () -> new RowConfiguration(wrongChar, wrongChar)),
                     () -> assertThrows(IllegalArgumentException.class, () -> new RowConfiguration(',', ','))
+            );
+        }
+
+        @Test
+        @DisplayName("Configuration getting is working")
+        void configuration() {
+            var row = new CsvRow();
+            var byTextRow = CsvRow.from("Hello,world,!", RowConfiguration.COMMA);
+            assertAll("Configuration",
+                    () -> assertEquals(RowConfiguration.SEMICOLON, row.configuration()),
+                    () -> assertEquals(RowConfiguration.SEMICOLON, byTextRow.configuration()),
+                    () -> assertEquals(RowConfiguration.COMMA, row.configure(RowConfiguration.COMMA).configuration())
             );
         }
 
@@ -244,10 +258,12 @@ final class CsvRowTest {
         void fromTextNull() {
             assertAll("Null assertions",
                     () -> assertThrows(NullPointerException.class, () -> CsvRow.from(null)),
-                    () -> assertThrows(NullPointerException.class, () -> CsvRow.from(null, new RowConfiguration(' ', '@'))),
+                    () -> {
+                        var config = new RowConfiguration(' ', '@');
+                        assertThrows(NullPointerException.class, () -> CsvRow.from(null, config));
+                    },
                     () -> assertThrows(NullPointerException.class, () -> CsvRow.from("null", null))
             );
-
         }
 
         @Test
@@ -304,14 +320,16 @@ final class CsvRowTest {
         @Test
         @DisplayName("Add first null assertions")
         void addFirstAssertions() {
-            assertThrows(NullPointerException.class, () -> new CsvRow().addFirst(null));
+            var emptyRow = new CsvRow();
+            assertThrows(NullPointerException.class, () -> emptyRow.addFirst(null));
         }
 
         @ParameterizedTest
         @MethodSource("escapeCharsProvider")
         @DisplayName("Add first wrong values assertions")
         void addFirstWrongValues(char wrongChar) {
-            assertThrows(InvalidCsvValueException.class, () -> new CsvRow().addFirst("He" + wrongChar + "llo"));
+            var emptyRow = new CsvRow();
+            assertThrows(InvalidCsvValueException.class, () -> emptyRow.addFirst("He" + wrongChar + "llo"));
         }
 
         @Test
@@ -333,14 +351,16 @@ final class CsvRowTest {
         @Test
         @DisplayName("Add last null assertions")
         void addLastAssertions() {
-            assertThrows(NullPointerException.class, () -> new CsvRow().addLast(null));
+            var emptyRow = new CsvRow();
+            assertThrows(NullPointerException.class, () -> emptyRow.addLast(null));
         }
 
         @ParameterizedTest
         @MethodSource("escapeCharsProvider")
         @DisplayName("Add last wrong values assertions")
         void addLastWrongValues(char wrongChar) {
-            assertThrows(InvalidCsvValueException.class, () -> new CsvRow().addLast("He" + wrongChar + "llo"));
+            var emptyRow = new CsvRow();
+            assertThrows(InvalidCsvValueException.class, () -> emptyRow.addLast("He" + wrongChar + "llo"));
         }
 
         @Test
@@ -362,7 +382,8 @@ final class CsvRowTest {
         @Test
         @DisplayName("Add null assertions")
         void addNullAssertions() {
-            assertThrows(NullPointerException.class, () -> new CsvRow().add(0, null));
+            var emptyRow = new CsvRow();
+            assertThrows(NullPointerException.class, () -> emptyRow.add(0, null));
         }
 
         @Test
@@ -384,7 +405,8 @@ final class CsvRowTest {
         @MethodSource("escapeCharsProvider")
         @DisplayName("Add wrong values assertions")
         void addWrongValues(char wrongChar) {
-            assertThrows(InvalidCsvValueException.class, () -> new CsvRow().add(0, "He" + wrongChar + "llo"));
+            var emptyRow = new CsvRow();
+            assertThrows(InvalidCsvValueException.class, () -> emptyRow.add(0, "He" + wrongChar + "llo"));
         }
 
         @Test
@@ -426,42 +448,42 @@ final class CsvRowTest {
         @Test
         @DisplayName("Add all null assertions")
         void addAllNullAssertions() {
+            var emptyRow = new CsvRow();
+            var lst = Collections.singleton((String) null);
             assertAll("Add all null",
-                    () -> assertThrows(NullPointerException.class, () -> new CsvRow().addAll(0, null)),
-                    () -> assertThrows(NullPointerException.class, () -> new CsvRow()
-                            .addAll(0, Collections.singleton(null)))
+                    () -> assertThrows(NullPointerException.class, () -> emptyRow.addAll(0, null)),
+                    () -> assertThrows(NullPointerException.class, () -> emptyRow.addAll(0, lst))
             );
-
         }
 
         @ParameterizedTest
         @ValueSource(ints = {-10, -1, 4, 5, 100})
         @DisplayName("Add all position assertions")
         void addAllPositionAssertions(int index) {
-            assertThrows(IndexOutOfBoundsException.class, () -> new CsvRow("Hello", "world", "!")
-                    .addAll(index, Collections.emptyList()));
+            var row = helloWorldRow();
+            var lst = new ArrayList<String>();
+            assertThrows(IndexOutOfBoundsException.class, () -> row.addAll(index, lst));
         }
 
         @ParameterizedTest
         @MethodSource("escapeCharsProvider")
         @DisplayName("Add all wrong values assertions")
         void addAllWrongValues(char wrongChar) {
-            assertAll("Add all wrong values",
-                    () -> assertThrows(InvalidCsvValueException.class, () -> new CsvRow("Hello", "world", "!")
-                            .addAll(0, Collections.singleton("He" + wrongChar + "llo"))),
-                    () -> assertThrows(InvalidCsvValueException.class, () -> new CsvRow("Hello", "world", "!")
-                            .addAll(1, Collections.singleton("He" + wrongChar + "llo"))),
-                    () -> assertThrows(InvalidCsvValueException.class, () -> new CsvRow("Hello", "world", "!")
-                            .addAll(2, Collections.singleton("He" + wrongChar + "llo"))),
-                    () -> assertThrows(InvalidCsvValueException.class, () -> new CsvRow("Hello", "world", "!")
-                            .addAll(3, Collections.singleton("He" + wrongChar + "llo")))
-            );
+            var row = helloWorldRow();
+            var lst = Collections.singleton("He" + wrongChar + "llo");
+            for (int i = 0; i < 4; i++) {
+                int finalI = i;
+                assertThrows(InvalidCsvValueException.class, () -> row
+                        .addAll(finalI, lst));
+            }
+
         }
 
     }
 
     @Nested
-    final class Set {
+    @DisplayName("Set")
+    final class SetTest {
 
         static Stream<Character> escapeCharsProvider() {
             return Stream.of('\n', '\0', '\r', '\b', '\f');
@@ -530,8 +552,9 @@ final class CsvRowTest {
         @ValueSource(ints = {-1, -2, -100})
         @DisplayName("Fill assertions")
         void fillAssertions(int size) {
+            var emptyRow = new CsvRow();
             assertAll("Fill assertions",
-                    () -> assertThrows(IllegalArgumentException.class, () -> new CsvRow().fill(size))
+                    () -> assertThrows(IllegalArgumentException.class, () -> emptyRow.fill(size))
             );
         }
 
@@ -646,7 +669,8 @@ final class CsvRowTest {
         @Test
         @DisplayName("RemoveIf null assertions")
         void removeIfNullAssertions() {
-            assertThrows(NullPointerException.class, () -> new CsvRow().removeIf(null));
+            var emptyRow = new CsvRow();
+            assertThrows(NullPointerException.class, () -> emptyRow.removeIf(null));
         }
 
     }
@@ -684,7 +708,8 @@ final class CsvRowTest {
         @Test
         @DisplayName("ForEach null assertions")
         void forEachNullAssertions() {
-            assertThrows(NullPointerException.class, () -> new CsvRow().forEach(null));
+            var emptyRow = new CsvRow();
+            assertThrows(NullPointerException.class, () -> emptyRow.forEach(null));
         }
 
     }
@@ -813,7 +838,8 @@ final class CsvRowTest {
         @Test
         @DisplayName("Map null assertions")
         void mapAssertions() {
-            assertThrows(NullPointerException.class, () -> new CsvRow().map(null));
+            var emptyRow = new CsvRow();
+            assertThrows(NullPointerException.class, () -> emptyRow.map(null));
         }
 
         @ParameterizedTest
