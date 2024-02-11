@@ -45,11 +45,11 @@ final class CsvSplitter {
         this.delimiter = configuration.delimiter();
     }
 
-    private void treatDelimiter(RowBuffer buffer){
+    private void treatDelimiter(RowBuffer buffer, String text){
         switch (quoteState){
             case OUT ->  buffer.appendCellToRow();
             case IN -> buffer.appendToCurrentCell(delimiter);
-            case ENCOUNTERED -> throw new IllegalStateException();
+            case ENCOUNTERED -> throw new CsvParsingException(text); // Not reachable
         }
     }
 
@@ -77,7 +77,7 @@ final class CsvSplitter {
             SkAssertions.validChar(c);
             if(c != quote && quoteState == QuoteState.ENCOUNTERED) quoteState = QuoteState.OUT;
             if(c == quote) treatQuote(buffer, text);
-            else if(c == delimiter) treatDelimiter(buffer);
+            else if(c == delimiter) treatDelimiter(buffer, text);
             else buffer.appendToCurrentCell(c);
         }
         if(chars[chars.length - 1] == delimiter || buffer.notEmpty()) buffer.appendCellToRow();
