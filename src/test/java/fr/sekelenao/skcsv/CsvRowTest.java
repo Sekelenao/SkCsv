@@ -756,6 +756,7 @@ final class CsvRowTest {
             var row = helloWorldRow();
             var it = row.iterator();
             assertAll("Iterator remove",
+                    () -> assertThrows(IllegalStateException.class, it::remove),
                     () -> {
                         for (int i = 0; it.hasNext(); i++) {
                             if (i == 1) {
@@ -830,6 +831,7 @@ final class CsvRowTest {
             var row = helloWorldRow();
             var it = row.listIterator();
             assertAll("Iterator remove",
+                    () -> assertThrows(IllegalStateException.class, it::remove),
                     () -> {
                         for (int i = 0; it.hasNext(); i++) {
                             if (i == 1) {
@@ -842,7 +844,6 @@ final class CsvRowTest {
                     () -> assertEquals(2, row.size()),
                     () -> assertEquals("world;!", row.toString())
             );
-
         }
 
     }
