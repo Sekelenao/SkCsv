@@ -1,0 +1,10 @@
+#DIRECTORIES
+target/
+bin/
+.idea/
+
+#FILES
+TODO.txt
+
+#PATTERNS
+*.iml
