@@ -231,6 +231,16 @@ final class CsvRowTest {
         }
 
         @Test
+        @DisplayName("From text complex tests")
+        void fromTextComplex() {
+            assertAll("From text complex",
+                    () -> assertEquals("", CsvRow.from("\"\"").toString()),
+                    () -> assertEquals("\"", CsvRow.from("\"\"\"\"").getFirst()),
+                    () -> assertEquals(" ; ; ;", CsvRow.from(" ; ; ;").toString())
+            );
+        }
+
+        @Test
         @DisplayName("From text with custom config")
         void fromTextWithConfig() {
             var defaultText = "Hello;world;!";
@@ -280,7 +290,9 @@ final class CsvRowTest {
                     () -> assertThrows(CsvParsingException.class, () -> CsvRow.from("''';world!;!", config)),
                     () -> assertThrows(CsvParsingException.class, () -> CsvRow.from("Hello;world!;!;'", config)),
                     () -> assertThrows(CsvParsingException.class, () -> CsvRow.from("'Hello,',world,'!''", config)),
-                    () -> assertThrows(CsvParsingException.class, () -> CsvRow.from("Hello,world,!''", config))
+                    () -> assertThrows(CsvParsingException.class, () -> CsvRow.from("Hello,world,!''", config)),
+                    () -> assertThrows(CsvParsingException.class, () -> CsvRow.from("\"")),
+                    () -> assertThrows(CsvParsingException.class, () -> CsvRow.from("\"\"\""))
             );
         }
 
@@ -1095,7 +1107,8 @@ final class CsvRowTest {
             assertAll("toString basic tests",
                     () -> assertEquals("\"Hello\"\"\";world;!;\";\";", rowAsString),
                     () -> assertEquals(row, CsvRow.from("\"Hello\"\"\";world;!;\";\";")),
-                    () -> assertEquals(row.toString(), rowAsString)
+                    () -> assertEquals(row.toString(), rowAsString),
+                    () -> assertEquals("\"\"\"\"", CsvRow.from("\"\"\"\"").toString())
             );
         }
     }
