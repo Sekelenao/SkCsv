@@ -824,6 +824,27 @@ final class CsvRowTest {
             );
         }
 
+        @Test
+        @DisplayName("List iterator remove")
+        void listIteratorRemove() {
+            var row = helloWorldRow();
+            var it = row.listIterator();
+            assertAll("Iterator remove",
+                    () -> {
+                        for (int i = 0; it.hasNext(); i++) {
+                            if (i == 1) {
+                                it.remove();
+                                assertThrows(IllegalStateException.class, it::remove);
+                            }
+                            it.next();
+                        }
+                    },
+                    () -> assertEquals(2, row.size()),
+                    () -> assertEquals("world;!", row.toString())
+            );
+
+        }
+
     }
 
     @Nested
