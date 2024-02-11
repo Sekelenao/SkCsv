@@ -183,10 +183,11 @@ public class CsvRow implements Iterable<String> {
         return cells.iterator();
     }
 
-    public ListIterator<String> listIterator(){
+    public ListIterator<String> listIterator(int index){
+        if(index != 0) Objects.checkIndex(index, cells.size());
         return new ListIterator<>() {
 
-            private final ListIterator<String> it = cells.listIterator();
+            private final ListIterator<String> it = cells.listIterator(index);
 
             @Override
             public boolean hasNext() {
@@ -242,6 +243,10 @@ public class CsvRow implements Iterable<String> {
             }
 
         };
+    }
+
+    public ListIterator<String> listIterator(){
+        return listIterator(0);
     }
 
     public Stream<String> stream() {
