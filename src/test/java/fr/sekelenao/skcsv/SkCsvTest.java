@@ -27,7 +27,7 @@ final class SkCsvTest {
         );
     }
 
-    private static SkCsv csvTemplate(int lineNumber){
+    private static SkCsv csvTemplate(int lineNumber) {
         return new SkCsv(
                 IntStream.range(0, lineNumber)
                         .mapToObj(i -> new SkCsvRow(String.valueOf(i)))
@@ -248,11 +248,11 @@ final class SkCsvTest {
             assertAll("Insert all at end",
                     () -> assertEquals(4, csv.size()),
                     () -> assertEquals("""
-                                       ""\"Hello";world;"!;"
-                                       'Hello,;""\"second,""\";world;!';
-                                       (;and Meta-verse;)
-                                       yes
-                                       """
+                                    ""\"Hello";world;"!;"
+                                    'Hello,;""\"second,""\";world;!';
+                                    (;and Meta-verse;)
+                                    yes
+                                    """
                             , csv.toString())
             );
         }
@@ -266,11 +266,11 @@ final class SkCsvTest {
             assertAll("Insert all at start",
                     () -> assertEquals(4, csv.size()),
                     () -> assertEquals("""
-                                       
-                                       (;and Meta-verse;)
-                                       ""\"Hello";world;"!;"
-                                       'Hello,;""\"second,""\";world;!';
-                                       """
+                                                                           
+                                    (;and Meta-verse;)
+                                    ""\"Hello";world;"!;"
+                                    'Hello,;""\"second,""\";world;!';
+                                    """
                             , csv.toString())
             );
         }
@@ -283,10 +283,10 @@ final class SkCsvTest {
             assertAll("Insert all",
                     () -> assertEquals(3, csv.size()),
                     () -> assertEquals("""
-                                       ""\"Hello";world;"!;"
-                                       (;and Meta-verse;)
-                                       'Hello,;""\"second,""\";world;!';
-                                       """
+                                    ""\"Hello";world;"!;"
+                                    (;and Meta-verse;)
+                                    'Hello,;""\"second,""\";world;!';
+                                    """
                             , csv.toString())
             );
         }
@@ -338,7 +338,7 @@ final class SkCsvTest {
         void setAllIndicesAssertions() {
             var csv = csvTemplate(8);
             var emptyCsv = new SkCsv();
-            var emptyRow =  new SkCsvRow();
+            var emptyRow = new SkCsvRow();
             assertAll("Set indices assertions",
                     () -> assertThrows(IndexOutOfBoundsException.class, () -> csv.set(-1, emptyRow)),
                     () -> assertThrows(IndexOutOfBoundsException.class, () -> csv.set(8, emptyRow)),
@@ -625,29 +625,25 @@ final class SkCsvTest {
                 return r;
             });
             assertAll("Map basics",
-                    () -> assertEquals("HELLO;WORLD;!", csv.toString()),
-                    () -> assertEquals(3, csv.size()),
-                    () -> assertDoesNotThrow(() -> csv.map((Object s) -> "")),
-                    () -> assertEquals(0, csv.stream().mapToInt(String::length).sum())
+                    () -> assertEquals("""
+                                       ""\"HELLO";WORLD;"!;"
+                                       'HELLO,;""\"SECOND,""\";WORLD;!';
+                                       """
+                            , csv.toString()),
+                    () -> assertEquals(2, csv.size()),
+                    () -> assertDoesNotThrow(() -> csv.map((Object s) -> new SkCsvRow())),
+                    () -> assertEquals(0, csv.stream().mapToInt(SkCsvRow::size).sum())
             );
         }
 
         @Test
         @DisplayName("Map null assertions")
         void mapAssertions() {
-            var helloWorldRow = helloWorldRow();
+            var csv = csvTemplate();
             assertAll("Map null assertions",
-                    () -> assertThrows(NullPointerException.class, () -> helloWorldRow.map(null)),
-                    () -> assertThrows(NullPointerException.class, () -> helloWorldRow.map(s -> null))
+                    () -> assertThrows(NullPointerException.class, () -> csv.map(null)),
+                    () -> assertThrows(NullPointerException.class, () -> csv.map(r -> null))
             );
-        }
-
-        @ParameterizedTest
-        @MethodSource("escapeCharsProvider")
-        @DisplayName("Map invalid values assertions")
-        void mapValueAssertions(char wrongChar) {
-            var row = helloWorldRow();
-            assertThrows(InvalidCsvValueException.class, () -> row.map(s -> "" + wrongChar));
         }
 
     }
