@@ -648,4 +648,25 @@ final class SkCsvTest {
 
     }
 
+    @Nested
+    final class Copy {
+
+        @Test
+        @DisplayName("Copy basic tests")
+        void copy() {
+            var csv = csvTemplate();
+            var copy = csv.copy();
+            assertAll("Copy basic tests",
+                    () -> assertEquals(csv, copy),
+                    () -> {
+                        csv.remove(csv.size() - 1);
+                        assertNotEquals(csv, copy);
+                    },
+                    () -> assertEquals(1, csv.size()),
+                    () -> assertEquals(2, copy.size())
+            );
+        }
+
+    }
+
 }

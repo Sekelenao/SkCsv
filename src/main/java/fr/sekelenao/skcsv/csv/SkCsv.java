@@ -156,6 +156,14 @@ public class SkCsv implements Iterable<SkCsvRow> {
         }
     }
 
+    public SkCsv copy() {
+        var newCsv = new SkCsv();
+        skCsvRows.stream()
+                .map(SkCsvRow::copy)
+                .forEach(newCsv::append);
+        return newCsv;
+    }
+
     public static SkCsv from(Path file, CsvConfiguration config) throws IOException {
         Objects.requireNonNull(file);
         Objects.requireNonNull(config);
