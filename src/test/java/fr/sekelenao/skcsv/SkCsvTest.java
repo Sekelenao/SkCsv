@@ -689,4 +689,25 @@ final class SkCsvTest {
 
     }
 
+    @Nested
+    final class HashCode {
+
+        @Test
+        @DisplayName("HashCode basic tests")
+        void hashcode() {
+            var csv1 = csvTemplate();
+            var csv2 = csvTemplate();
+            assertAll("Equals basic tests",
+                    () -> assertEquals(csv1.hashCode(), csv2.hashCode()),
+                    () -> {
+                        csv1.set(0, new SkCsvRow());
+                        assertNotEquals(csv1.hashCode(), csv2.hashCode());
+                    }
+            );
+        }
+
+    }
+
+
+
 }
