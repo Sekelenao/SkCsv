@@ -2,6 +2,10 @@ package fr.sekelenao.skcsv.csv;
 
 import fr.sekelenao.skcsv.exception.InvalidCsvValueException;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Objects;
+
 final class SkAssertions {
 
     private SkAssertions() {
@@ -28,8 +32,10 @@ final class SkAssertions {
     }
 
     static void validPosition(int position, int size) {
-        if (position > size)
+        if (position > size || position < 0)
             throw new IndexOutOfBoundsException("Position " + position + " out of bounds for length " + size);
     }
+
+
 
 }
