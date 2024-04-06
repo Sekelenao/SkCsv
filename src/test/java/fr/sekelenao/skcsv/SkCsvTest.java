@@ -669,4 +669,24 @@ final class SkCsvTest {
 
     }
 
+    @Nested
+    final class Equals {
+
+        @Test
+        @DisplayName("Equals basic tests")
+        void equals() {
+            var csv1 = csvTemplate();
+            var csv2 = csvTemplate();
+            assertAll("Equals basic tests",
+                    () -> assertNotSame(csv1, csv2),
+                    () -> assertEquals(csv1, csv2),
+                    () -> {
+                        csv1.set(0, new SkCsvRow());
+                        assertNotEquals(csv1, csv2);
+                    }
+            );
+        }
+
+    }
+
 }
