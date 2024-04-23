@@ -4,6 +4,7 @@ import fr.sekelenao.skcsv.csv.SkCsv;
 import fr.sekelenao.skcsv.csv.SkCsvConfig;
 import fr.sekelenao.skcsv.csv.SkCsvRecord;
 import fr.sekelenao.skcsv.csv.SkCsvRecords;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -23,31 +24,71 @@ public final class SkCsvRecordTest {
                          @CsvColumn("Number of legs") int legs) implements SkCsvRecord {
     }
 
+    public record Food(String name, String color) implements SkCsvRecord {
+
+        @Override
+        public Iterable<String> skRecordValues() {
+            return List.of(name, color.toUpperCase());
+        }
+
+    }
+
     private static final Path PATH = Paths.get("src", "test", "resources", "produced.csv");
 
-    private static final List<Animal> animals = List.of(
+    private static final List<Animal> ANIMALS = List.of(
             new Animal("Dog", 0f, 4),
             new Animal("\"Cat\"\n", 0f, 4),
             new Animal("Spider;", 0f, 8)
+    );
+
+    private static final List<Food> FOODS = List.of(
+            new Food("Banana", "yellow"),
+            new Food("Burger", "idk"),
+            new Food("Fish", "blue for sure")
     );
 
     @Nested
     final class Export {
 
         @Test
+        @DisplayName("Export with annotation and default methods")
         void exportWithAnnotation() throws IOException {
-            SkCsvRecords.exportWithHeaders(PATH, animals, SkCsvConfig.SEMICOLON, StandardOpenOption.CREATE);
+            SkCsvRecords.exportWithHeaders(PATH, ANIMALS, SkCsvConfig.SEMICOLON, StandardOpenOption.CREATE);
             var csv = SkCsv.from(PATH);
             assertAll("With annotation and header",
                     () -> assertEquals(4, csv.size()),
                     () -> assertEquals(2, csv.getFirst().size()),
-                    () -> assertEquals(animals.getFirst().name, csv.get(1).getFirst()),
-                    () -> assertEquals(animals.get(1).name, csv.get(2).getFirst()),
-                    () -> assertEquals(animals.get(2).name, csv.get(3).getFirst()),
-                    () -> assertEquals(animals.getLast().legs, Integer.parseInt(csv.getLast().getLast()))
+                    () -> assertEquals(ANIMALS.getFirst().name, csv.get(1).getFirst()),
+                    () -> assertEquals(ANIMALS.get(1).name, csv.get(2).getFirst()),
+                    () -> assertEquals(ANIMALS.get(2).name, csv.get(3).getFirst()),
+                    () -> assertEquals(ANIMALS.getLast().legs, Integer.parseInt(csv.getLast().getLast()))
             );
             Files.deleteIfExists(PATH);
-            SkCsvRecords.export(PATH, animals, SkCsvConfig.COMMA, StandardOpenOption.CREATE);
+            SkCsvRecords.export(PATH, ANIMALS, SkCsvConfig.COMMA, StandardOpenOption.CREATE);
+            var csv2 = SkCsv.from(PATH, SkCsvConfig.COMMA);
+            assertAll("With annotation without header",
+                    () -> assertEquals(3, csv2.size()),
+                    () -> assertEquals(2, csv2.getFirst().size())
+            );
+            Files.deleteIfExists(PATH);
+        }
+
+        @Test
+        @DisplayName("Export with annotation and override methods")
+        void exportWithAnnotationOverride() throws IOException {
+            SkCsvRecords.exportWithHeaders(PATH, FOODS, SkCsvConfig.SEMICOLON, StandardOpenOption.CREATE);
+            var csv = SkCsv.from(PATH);
+            System.out.println(csv);
+            assertAll("With annotation and header",
+                    () -> assertEquals(3, csv.size()),
+                    () -> assertEquals(2, csv.getFirst().size()),
+                    () -> assertEquals(FOODS.getFirst().name, csv.get(0).getFirst()),
+                    () -> assertEquals(FOODS.get(1).name, csv.get(1).getFirst()),
+                    () -> assertEquals(FOODS.get(2).name, csv.get(2).getFirst()),
+                    () -> assertEquals(FOODS.getLast().color.toUpperCase(), csv.getLast().getLast())
+            );
+            Files.deleteIfExists(PATH);
+            SkCsvRecords.export(PATH, FOODS, SkCsvConfig.COMMA, StandardOpenOption.CREATE);
             var csv2 = SkCsv.from(PATH, SkCsvConfig.COMMA);
             assertAll("With annotation without header",
                     () -> assertEquals(3, csv2.size()),
