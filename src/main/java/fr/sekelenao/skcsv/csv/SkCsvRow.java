@@ -26,11 +26,11 @@ public class SkCsvRow implements Iterable<String> {
     /**
      * Constructs a CsvRow with a specified size and fills it with empty strings.
      *
-     * @param size The size of the CsvRow to be created.
+     * @param amount The amount of cell of the CsvRow to be created.
      */
-    public SkCsvRow(int size) {
-        SkAssertions.positive(size);
-        fill(size);
+    public SkCsvRow(int amount) {
+        SkAssertions.positive(amount);
+        fill(amount);
     }
 
     /**
