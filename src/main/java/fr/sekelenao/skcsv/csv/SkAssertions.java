@@ -5,7 +5,7 @@ import fr.sekelenao.skcsv.exception.InvalidCsvValueException;
 final class SkAssertions {
 
     private SkAssertions() {
-        throw new AssertionError("You cannot instantiate this class.");
+        throw new AssertionError("This class cannot be instantiated.");
     }
 
     static void positive(int integer) {
