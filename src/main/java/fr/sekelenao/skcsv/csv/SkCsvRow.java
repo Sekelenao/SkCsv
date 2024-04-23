@@ -43,7 +43,6 @@ public class SkCsvRow implements Iterable<String> {
         Objects.requireNonNull(array);
         for (var value : array) {
             Objects.requireNonNull(value);
-            SkAssertions.conformValue(value);
             cells.addLast(value);
         }
     }
@@ -58,36 +57,8 @@ public class SkCsvRow implements Iterable<String> {
         Objects.requireNonNull(iterable);
         for (var value : iterable) {
             Objects.requireNonNull(value);
-            SkAssertions.conformValue(value);
             cells.addLast(value);
         }
-    }
-
-    /**
-     * Constructs a CsvRow from a string according to a specified CSV configuration.
-     *
-     * @param text   The text representing the CSV row.
-     * @param config The CSV configuration defining the format of the CSV row.
-     * @return The CsvRow parsed from the provided text.
-     * @throws NullPointerException if the provided text or configuration is null.
-     */
-    public static SkCsvRow from(String text, CsvConfiguration config) {
-        Objects.requireNonNull(text);
-        Objects.requireNonNull(config);
-        var splitter = new CsvFormatter(config);
-        return splitter.split(text);
-    }
-
-    /**
-     * Constructs a CsvRow from a string using the default CSV configuration (semicolon delimiter).
-     *
-     * @param text The text representing the CSV row.
-     * @return The CsvRow parsed from the provided text.
-     * @throws NullPointerException if the provided text is null.
-     */
-    public static SkCsvRow from(String text) {
-        Objects.requireNonNull(text);
-        return from(text, CsvConfiguration.SEMICOLON);
     }
 
     /**
@@ -114,9 +85,8 @@ public class SkCsvRow implements Iterable<String> {
      * @param value The value of the cell to be appended.
      * @throws NullPointerException if the provided value is null.
      */
-    public void append(String value) {
+    public void add(String value) {
         Objects.requireNonNull(value);
-        SkAssertions.conformValue(value);
         cells.addLast(value);
     }
 
@@ -131,7 +101,6 @@ public class SkCsvRow implements Iterable<String> {
     public void insert(int position, String value) {
         Objects.requireNonNull(value);
         SkAssertions.validPosition(position, cells.size());
-        SkAssertions.conformValue(value);
         cells.add(position, value);
     }
 
@@ -150,14 +119,12 @@ public class SkCsvRow implements Iterable<String> {
         if (position == cells.size()) {
             for (var value : values) {
                 Objects.requireNonNull(value);
-                SkAssertions.conformValue(value);
-                this.append(value);
+                this.add(value);
             }
         } else {
             var lst = new ArrayList<String>();
             for (var value : values) {
                 Objects.requireNonNull(value);
-                SkAssertions.conformValue(value);
                 lst.add(value);
             }
             cells.addAll(position, lst);
@@ -179,14 +146,12 @@ public class SkCsvRow implements Iterable<String> {
         if (position == cells.size()) {
             values.forEach(value -> {
                 Objects.requireNonNull(value);
-                SkAssertions.conformValue(value);
-                this.append(value);
+                this.add(value);
             });
         } else {
             var lst = new ArrayList<String>();
             for (var value : values) {
                 Objects.requireNonNull(value);
-                SkAssertions.conformValue(value);
                 lst.add(value);
             }
             cells.addAll(position, lst);
@@ -205,7 +170,6 @@ public class SkCsvRow implements Iterable<String> {
     public String set(int index, String value) {
         Objects.checkIndex(index, cells.size());
         Objects.requireNonNull(value);
-        SkAssertions.conformValue(value);
         return cells.set(index, value);
     }
 
@@ -217,7 +181,7 @@ public class SkCsvRow implements Iterable<String> {
      */
     public void fill(int amount) {
         SkAssertions.positive(amount);
-        for (int i = 0; i < amount; i++) append("");
+        for (int i = 0; i < amount; i++) add("");
     }
 
     /**
@@ -330,7 +294,6 @@ public class SkCsvRow implements Iterable<String> {
         while (it.hasNext()) {
             var mappedValue = mapper.apply(it.next());
             Objects.requireNonNull(mappedValue);
-            SkAssertions.conformValue(mappedValue);
             it.set(mappedValue);
         }
     }
