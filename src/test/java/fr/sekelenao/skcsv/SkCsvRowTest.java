@@ -1,6 +1,6 @@
 package fr.sekelenao.skcsv;
 
-import fr.sekelenao.skcsv.csv.CsvConfiguration;
+import fr.sekelenao.skcsv.csv.SkCsvConfig;
 import fr.sekelenao.skcsv.csv.SkCsv;
 import fr.sekelenao.skcsv.csv.SkCsvRow;
 import org.junit.jupiter.api.DisplayName;
@@ -693,9 +693,9 @@ final class SkCsvRowTest {
             var otherRow = new SkCsvRow("Hello'", "world", "!", ",", "'");
             assertAll("toString custom config",
                     () -> assertEquals("\"Hello\"\"\";world;!;\";\";", row.toString()),
-                    () -> assertEquals("\"Hello\"\"\",world,!,;,", row.toString(CsvConfiguration.COMMA)),
-                    () -> assertEquals("Hello\",world,!,;,", row.toString(new CsvConfiguration(',', '\''))),
-                    () -> assertEquals("'Hello''',world,!,',',''''", otherRow.toString(new CsvConfiguration(',', '\'')))
+                    () -> assertEquals("\"Hello\"\"\",world,!,;,", row.toString(SkCsvConfig.COMMA)),
+                    () -> assertEquals("Hello\",world,!,;,", row.toString(new SkCsvConfig(',', '\''))),
+                    () -> assertEquals("'Hello''',world,!,',',''''", otherRow.toString(new SkCsvConfig(',', '\'')))
             );
         }
 

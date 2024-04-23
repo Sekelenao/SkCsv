@@ -342,7 +342,7 @@ public class SkCsvRow implements Iterable<String> {
      */
     @Override
     public String toString() {
-        var formatter = new CsvFormatter(CsvConfiguration.SEMICOLON);
+        var formatter = new CsvFormatter(SkCsvConfig.SEMICOLON);
         return formatter.toCsvString(cells);
     }
 
@@ -353,7 +353,7 @@ public class SkCsvRow implements Iterable<String> {
      * @return A string representation of this CsvRow according to the specified configuration.
      * @throws NullPointerException if the provided configuration is null.
      */
-    public String toString(CsvConfiguration configuration) {
+    public String toString(SkCsvConfig configuration) {
         Objects.requireNonNull(configuration);
         var formatter = new CsvFormatter(configuration);
         return formatter.toCsvString(cells);

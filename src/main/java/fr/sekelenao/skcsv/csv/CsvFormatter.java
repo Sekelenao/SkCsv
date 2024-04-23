@@ -46,7 +46,7 @@ final class CsvFormatter {
     private final char delimiter;
     private QuoteState quoteState = QuoteState.OUT;
 
-    public CsvFormatter(CsvConfiguration configuration) {
+    public CsvFormatter(SkCsvConfig configuration) {
         Objects.requireNonNull(configuration);
         this.quote = configuration.quote();
         this.delimiter = configuration.delimiter();

@@ -1,8 +1,7 @@
 package fr.sekelenao.skcsv;
 
-import fr.sekelenao.skcsv.csv.CsvConfiguration;
+import fr.sekelenao.skcsv.csv.SkCsvConfig;
 import fr.sekelenao.skcsv.csv.SkCsv;
-import fr.sekelenao.skcsv.csv.SkCsvRecord;
 import fr.sekelenao.skcsv.csv.SkCsvRow;
 import fr.sekelenao.skcsv.exception.CsvParsingException;
 import fr.sekelenao.skcsv.exception.InvalidCsvValueException;
@@ -146,15 +145,15 @@ final class SkCsvTest {
                             \"""Hello";world;"!;"
                             'Hello,;\"""second,\""";world;!';
                             """, csv.toString()),
-                    () -> assertEquals(CsvConfiguration.SEMICOLON, csv.configuration()),
+                    () -> assertEquals(SkCsvConfig.SEMICOLON, csv.configuration()),
                     () -> {
-                        csv.configure(new CsvConfiguration(',', '\''));
+                        csv.configure(new SkCsvConfig(',', '\''));
                         assertEquals("""
                                 "Hello,world,!;
                                 '''Hello,','"second,"',world,'!''',
                                 """, csv.toString());
                     },
-                    () -> assertEquals(new CsvConfiguration(',', '\''), csv.configuration())
+                    () -> assertEquals(new SkCsvConfig(',', '\''), csv.configuration())
             );
         }
 
@@ -163,9 +162,9 @@ final class SkCsvTest {
         @DisplayName("Configuration assertions")
         void configAssertions(char wrongChar) {
             assertAll("Configuration assertions",
-                    () -> assertThrows(InvalidCsvValueException.class, () -> new CsvConfiguration(wrongChar, '"')),
-                    () -> assertThrows(InvalidCsvValueException.class, () -> new CsvConfiguration(';', wrongChar)),
-                    () -> assertThrows(IllegalArgumentException.class, () -> new CsvConfiguration(';', ';'))
+                    () -> assertThrows(InvalidCsvValueException.class, () -> new SkCsvConfig(wrongChar, '"')),
+                    () -> assertThrows(InvalidCsvValueException.class, () -> new SkCsvConfig(';', wrongChar)),
+                    () -> assertThrows(IllegalArgumentException.class, () -> new SkCsvConfig(';', ';'))
             );
         }
     }
@@ -736,7 +735,7 @@ final class SkCsvTest {
         void fromTextWithConfig() {
             var defaultText = Collections.singleton("Hello;world;!");
             var customText = Collections.singleton("'Hello,',world,'!'''");
-            var config = new CsvConfiguration(',', '\'');
+            var config = new SkCsvConfig(',', '\'');
             var defaultRow = SkCsv.from(defaultText, config).getFirst();
             var customRow = SkCsv.from(customText, config).getFirst();
             assertAll("from text custom config",
@@ -757,7 +756,7 @@ final class SkCsvTest {
             assertAll("Null assertions",
                     () -> assertThrows(NullPointerException.class, () -> SkCsv.from((Iterable<String>) null)),
                     () -> {
-                        var config = new CsvConfiguration(' ', '@');
+                        var config = new SkCsvConfig(' ', '@');
                         assertThrows(NullPointerException.class, () -> SkCsv.from((List<String>) null, config));
                     },
                     () -> {
@@ -770,7 +769,7 @@ final class SkCsvTest {
         @Test
         @DisplayName("From text parsing exceptions")
         void fromTextParsingAssertions() {
-            var config = new CsvConfiguration(',', '\'');
+            var config = new SkCsvConfig(',', '\'');
             assertAll("From text default",
                     () -> {
                         var singleton = Collections.singleton("Hello;\"world\"\";!");
@@ -859,16 +858,16 @@ final class SkCsvTest {
             var pathSemicolon = Paths.get("src", "test", "resources", "template.csv");
             var pathComma = Paths.get("src", "test", "resources", "template_comma.csv");
             var pathUselessQuotes = Paths.get("src", "test", "resources", "template_useless_quotes.csv");
-            var csvSemicolon = SkCsv.from(pathSemicolon, CsvConfiguration.SEMICOLON);
-            var csvComma = SkCsv.from(pathComma, CsvConfiguration.COMMA);
+            var csvSemicolon = SkCsv.from(pathSemicolon, SkCsvConfig.SEMICOLON);
+            var csvComma = SkCsv.from(pathComma, SkCsvConfig.COMMA);
             var csvUselessQuotes = SkCsv.from(pathUselessQuotes);
             assertAll("From a file",
                     () -> assertEquals(6, csvSemicolon.size()),
                     () -> assertEquals(6, csvComma.size()),
                     () -> assertEquals(Files.readString(pathSemicolon).replace("\r", ""), csvSemicolon.toString()),
-                    () -> assertEquals(Files.readString(pathComma).replace("\r", ""), csvComma.configure(CsvConfiguration.COMMA).toString()),
+                    () -> assertEquals(Files.readString(pathComma).replace("\r", ""), csvComma.configure(SkCsvConfig.COMMA).toString()),
                     () -> assertEquals(csvSemicolon, csvComma),
-                    () -> assertEquals(csvSemicolon.configure(new CsvConfiguration('@', '/')), csvComma),
+                    () -> assertEquals(csvSemicolon.configure(new SkCsvConfig('@', '/')), csvComma),
                     () -> assertEquals(csvSemicolon, csvUselessQuotes)
             );
         }
@@ -888,7 +887,7 @@ final class SkCsvTest {
             );
             csv.export(path, StandardOpenOption.CREATE);
             assertEquals(Files.readString(path).replace("\r", ""), csv.toString());
-            Files.delete(path);
+            Files.deleteIfExists(path);
         }
 
     }

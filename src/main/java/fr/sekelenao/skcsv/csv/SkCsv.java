@@ -15,7 +15,7 @@ public class SkCsv implements Iterable<SkCsvRow> {
 
     private final List<SkCsvRow> skCsvRows = new ArrayList<>();
 
-    private CsvConfiguration config = CsvConfiguration.SEMICOLON;
+    private SkCsvConfig config = SkCsvConfig.SEMICOLON;
 
     public SkCsv() {}
 
@@ -35,12 +35,12 @@ public class SkCsv implements Iterable<SkCsvRow> {
         });
     }
 
-    public SkCsv configure(CsvConfiguration config) {
+    public SkCsv configure(SkCsvConfig config) {
         this.config = Objects.requireNonNull(config);
         return this;
     }
 
-    public CsvConfiguration configuration() {
+    public SkCsvConfig configuration() {
         return config;
     }
 
@@ -157,7 +157,7 @@ public class SkCsv implements Iterable<SkCsvRow> {
         }
     }
 
-    public static SkCsv from(Path path, CsvConfiguration config) throws IOException {
+    public static SkCsv from(Path path, SkCsvConfig config) throws IOException {
         Objects.requireNonNull(path);
         Objects.requireNonNull(config);
         var formatter = new CsvFormatter(config);
@@ -166,10 +166,10 @@ public class SkCsv implements Iterable<SkCsvRow> {
 
     public static SkCsv from(Path path) throws IOException {
         Objects.requireNonNull(path);
-        return from(path, CsvConfiguration.SEMICOLON);
+        return from(path, SkCsvConfig.SEMICOLON);
     }
 
-    public static SkCsv from(Iterable<String> text, CsvConfiguration config) {
+    public static SkCsv from(Iterable<String> text, SkCsvConfig config) {
         Objects.requireNonNull(text);
         Objects.requireNonNull(config);
         var formatter = new CsvFormatter(config);
@@ -178,7 +178,7 @@ public class SkCsv implements Iterable<SkCsvRow> {
 
     public static SkCsv from(Iterable<String> text) {
         Objects.requireNonNull(text);
-        return from(text, CsvConfiguration.SEMICOLON);
+        return from(text, SkCsvConfig.SEMICOLON);
     }
 
     public void export(Path path, OpenOption... openOptions) throws IOException {
