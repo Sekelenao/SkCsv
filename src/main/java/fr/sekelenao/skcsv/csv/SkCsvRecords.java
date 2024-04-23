@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public final class SkCsvRecords {
@@ -14,7 +15,7 @@ public final class SkCsvRecords {
         throw new AssertionError("This class cannot be instantiated.");
     }
 
-    public static <R extends Record> Iterable<String> generateHeaders(Class<R> type) {
+    public static <R extends Record> List<String> generateHeaders(Class<R> type) {
         Objects.requireNonNull(type);
         var components = type.getRecordComponents();
         var headers = new ArrayList<String>(components.length);
@@ -60,8 +61,11 @@ public final class SkCsvRecords {
         try (var writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, openOptions)) {
             if(iterator.hasNext()) {
                 var firstRecord = iterator.next();
-                writer.write(formatter.toCsvString(generateHeaders(firstRecord.getClass())));
-                writer.newLine();
+                var headers = generateHeaders(firstRecord.getClass());
+                if(!headers.isEmpty()){
+                    writer.write(formatter.toCsvString(headers));
+                    writer.newLine();
+                }
                 writer.write(formatter.toCsvString(firstRecord.skRecordValues()));
                 writer.newLine();
             }
