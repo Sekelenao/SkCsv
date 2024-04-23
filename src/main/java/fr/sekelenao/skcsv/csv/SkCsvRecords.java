@@ -14,16 +14,16 @@ public final class SkCsvRecords {
         throw new AssertionError("This class cannot be instantiated.");
     }
 
-    private static <R extends Record> Iterable<String> generateHeaders(Class<R> type) {
+    public static <R extends Record> Iterable<String> generateHeaders(Class<R> type) {
         Objects.requireNonNull(type);
-        var headers = new ArrayList<String>();
-        var fields = type.getDeclaredFields();
-        for (var field : fields) {
-            if (field.isAnnotationPresent(SkCsvRecord.CsvColumn.class)) {
-                var annotation = field.getAnnotation(SkCsvRecord.CsvColumn.class);
+        var components = type.getRecordComponents();
+        var headers = new ArrayList<String>(components.length);
+        for (var component : components) {
+            if (component.isAnnotationPresent(SkCsvRecord.CsvColumn.class)) {
+                var annotation = component.getAnnotation(SkCsvRecord.CsvColumn.class);
                 var header = annotation.value();
                 if (header.isEmpty()) {
-                    headers.add(field.getName());
+                    headers.add(component.getName());
                 } else {
                     headers.add(header);
                 }
@@ -33,7 +33,7 @@ public final class SkCsvRecords {
     }
 
     public static <R extends Record & SkCsvRecord> void export(
-            Path path, Iterable<R> records, CsvConfiguration config, OpenOption... openOptions
+            Path path, Iterable<R> records, SkCsvConfig config, OpenOption... openOptions
     ) throws IOException {
         Objects.requireNonNull(path);
         Objects.requireNonNull(records);
@@ -49,7 +49,7 @@ public final class SkCsvRecords {
     }
 
     public static <R extends Record & SkCsvRecord> void exportWithHeaders(
-            Path path, Iterable<R> records, CsvConfiguration config, OpenOption... openOptions
+            Path path, Iterable<R> records, SkCsvConfig config, OpenOption... openOptions
     ) throws IOException {
         Objects.requireNonNull(path);
         Objects.requireNonNull(records);
@@ -63,6 +63,7 @@ public final class SkCsvRecords {
                 writer.write(formatter.toCsvString(generateHeaders(firstRecord.getClass())));
                 writer.newLine();
                 writer.write(formatter.toCsvString(firstRecord.skRecordValues()));
+                writer.newLine();
             }
             while (iterator.hasNext()) {
                 writer.write(formatter.toCsvString(iterator.next().skRecordValues()));
