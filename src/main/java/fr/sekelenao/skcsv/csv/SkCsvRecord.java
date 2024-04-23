@@ -34,7 +34,6 @@ public interface SkCsvRecord {
                 if(header.isEmpty()){
                     headers.add(field.getName());
                 } else {
-                    SkAssertions.conformValue(header);
                     headers.add(header);
                 }
             }
@@ -54,5 +53,7 @@ public interface SkCsvRecord {
         }
         return values;
     }
+
+
 
 }
