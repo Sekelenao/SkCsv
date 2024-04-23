@@ -13,12 +13,4 @@ public record CsvConfiguration(char delimiter, char quote) {
             throw new IllegalArgumentException("Delimiter should be different than quotes");
     }
 
-    public String delimiterAsString(){
-        return Character.toString(delimiter);
-    }
-
-    public String quoteAsString(){
-        return Character.toString(quote);
-    }
-
 }
