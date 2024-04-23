@@ -2,6 +2,7 @@ package fr.sekelenao.skcsv;
 
 import fr.sekelenao.skcsv.csv.CsvConfiguration;
 import fr.sekelenao.skcsv.csv.SkCsv;
+import fr.sekelenao.skcsv.csv.SkCsvRecord;
 import fr.sekelenao.skcsv.csv.SkCsvRow;
 import fr.sekelenao.skcsv.exception.CsvParsingException;
 import fr.sekelenao.skcsv.exception.InvalidCsvValueException;
@@ -272,7 +273,7 @@ final class SkCsvTest {
             assertAll("Insert all at start",
                     () -> assertEquals(4, csv.size()),
                     () -> assertEquals("""
-                                                                           
+                                    
                                     (;and Meta-verse;)
                                     ""\"Hello";world;"!;"
                                     'Hello,;""\"second,""\";world;!';
