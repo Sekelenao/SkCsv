@@ -3,6 +3,7 @@ package fr.sekelenao.skcsv.csv;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
@@ -51,7 +52,7 @@ public class SkCsv implements Iterable<SkCsvRow> {
         return skCsvRows.isEmpty();
     }
 
-    public void append(SkCsvRow row) {
+    public void add(SkCsvRow row) {
         Objects.requireNonNull(row);
         skCsvRows.add(row);
     }
@@ -156,30 +157,35 @@ public class SkCsv implements Iterable<SkCsvRow> {
         }
     }
 
-    public SkCsv copy() {
-        var newCsv = new SkCsv();
-        skCsvRows.stream()
-                .map(SkCsvRow::copy)
-                .forEach(newCsv::append);
-        return newCsv;
-    }
-
-    public static SkCsv from(Path file, CsvConfiguration config) throws IOException {
-        Objects.requireNonNull(file);
-        Objects.requireNonNull(config);
-        var formatter = new CsvFormatter(config);
-        var csv = new SkCsv();
-        try (var reader = Files.newBufferedReader(file)) {
-            csv.append(formatter.split(reader.readLine()));
-        }
-        return csv;
-    }
-
-    public void export(Path path) throws IOException {
+    public static SkCsv from(Path path, CsvConfiguration config) throws IOException {
         Objects.requireNonNull(path);
         Objects.requireNonNull(config);
         var formatter = new CsvFormatter(config);
-        try (var writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+        return formatter.split(Files.readAllLines(path));
+    }
+
+    public static SkCsv from(Path path) throws IOException {
+        Objects.requireNonNull(path);
+        return from(path, CsvConfiguration.SEMICOLON);
+    }
+
+    public static SkCsv from(Iterable<String> text, CsvConfiguration config) {
+        Objects.requireNonNull(text);
+        Objects.requireNonNull(config);
+        var formatter = new CsvFormatter(config);
+        return formatter.split(text);
+    }
+
+    public static SkCsv from(Iterable<String> text) {
+        Objects.requireNonNull(text);
+        return from(text, CsvConfiguration.SEMICOLON);
+    }
+
+    public void export(Path path, OpenOption... openOptions) throws IOException {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(openOptions);
+        var formatter = new CsvFormatter(config);
+        try (var writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, openOptions)) {
             for (var row : this) {
                 writer.write(formatter.toCsvString(row));
                 writer.newLine();
