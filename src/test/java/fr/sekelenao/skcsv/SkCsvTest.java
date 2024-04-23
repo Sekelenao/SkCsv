@@ -2,7 +2,6 @@ package fr.sekelenao.skcsv;
 
 import fr.sekelenao.skcsv.csv.CsvConfiguration;
 import fr.sekelenao.skcsv.csv.SkCsv;
-import fr.sekelenao.skcsv.csv.SkCsvRecord;
 import fr.sekelenao.skcsv.csv.SkCsvRow;
 import fr.sekelenao.skcsv.exception.CsvParsingException;
 import fr.sekelenao.skcsv.exception.InvalidCsvValueException;
