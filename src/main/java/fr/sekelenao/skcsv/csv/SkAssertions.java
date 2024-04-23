@@ -23,10 +23,6 @@ final class SkAssertions {
         }
     }
 
-    static void conformValue(String value) {
-        value.chars().forEach(SkAssertions::validChar);
-    }
-
     static void validPosition(int position, int size) {
         if (position > size || position < 0)
             throw new IndexOutOfBoundsException("Position " + position + " out of bounds for length " + size);
