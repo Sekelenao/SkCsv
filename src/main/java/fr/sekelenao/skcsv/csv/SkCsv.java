@@ -186,7 +186,7 @@ public class SkCsv implements Iterable<SkCsvRow> {
         Objects.requireNonNull(openOptions);
         var formatter = new CsvFormatter(config);
         try (var writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, openOptions)) {
-            for (var row : this) {
+            for (var row : skCsvRows) {
                 writer.write(formatter.toCsvString(row));
                 writer.newLine();
             }
