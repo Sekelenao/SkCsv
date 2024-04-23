@@ -1,31 +1,37 @@
 package fr.sekelenao.skcsv.csv;
 
-
 import fr.sekelenao.skcsv.exception.CsvParsingException;
 
 import java.util.Objects;
 
 final class CsvFormatter {
 
-    private static final class RowBuffer {
+    private static final class CsvBuffer {
 
-        private final SkCsvRow row;
+        private final SkCsv csv;
+
+        private SkCsvRow row;
 
         private StringBuilder cell;
 
-        public RowBuffer() {
+        public CsvBuffer() {
+            this.csv = new SkCsv();
             this.row = new SkCsvRow();
             this.cell = new StringBuilder();
         }
 
-        public void appendToCurrentCell(char c) {
-            SkAssertions.validChar(c);
+        public void appendToCell(char c) {
             cell.append(c);
         }
 
-        public void appendCellToRow() {
-            row.append(cell.toString());
+        public void pushCell() {
+            row.add(cell.toString());
             cell = new StringBuilder();
+        }
+
+        public void pushRow(){
+            csv.add(row);
+            row = new SkCsvRow();
         }
 
         public boolean notEmpty() {
@@ -35,6 +41,7 @@ final class CsvFormatter {
     }
 
     private enum QuoteState {ENCOUNTERED, IN, OUT}
+
     private final char quote;
     private final char delimiter;
     private QuoteState quoteState = QuoteState.OUT;
@@ -45,71 +52,100 @@ final class CsvFormatter {
         this.delimiter = configuration.delimiter();
     }
 
-    private void treatDelimiter(RowBuffer buffer, String text) {
+    private void treatDelimiter(CsvBuffer buffer) {
         switch (quoteState) {
-            case OUT -> buffer.appendCellToRow();
-            case IN -> buffer.appendToCurrentCell(delimiter);
-            case ENCOUNTERED -> throw new CsvParsingException(text); // Not reachable
+            case OUT -> buffer.pushCell();
+            case IN -> buffer.appendToCell(delimiter);
+            case ENCOUNTERED -> {
+                buffer.pushCell();
+                quoteState = QuoteState.OUT;
+            }
         }
     }
 
-    private void treatQuote(RowBuffer buffer, String text) {
+    private void treatQuote(CsvBuffer buffer, String text) {
         switch (quoteState) {
             case OUT -> {
                 if (buffer.notEmpty()) throw new CsvParsingException(text);
                 quoteState = QuoteState.IN;
             }
+            case IN -> quoteState = QuoteState.ENCOUNTERED;
             case ENCOUNTERED -> {
-                buffer.appendToCurrentCell(quote);
+                buffer.appendToCell(quote);
                 quoteState = QuoteState.IN;
             }
-            case IN -> quoteState = QuoteState.ENCOUNTERED;
         }
     }
 
-    public SkCsvRow split(String text) {
+    private void treatChar(CsvBuffer buffer, char c, String text){
+        Objects.requireNonNull(buffer);
         Objects.requireNonNull(text);
-        if (text.isEmpty()) return new SkCsvRow();
-        quoteState = QuoteState.OUT;
-        var chars = text.toCharArray();
-        var buffer = new RowBuffer();
-        for (char c : chars) {
-            SkAssertions.validChar(c);
-            if (c != quote && quoteState == QuoteState.ENCOUNTERED) quoteState = QuoteState.OUT;
-            if (c == quote) treatQuote(buffer, text);
-            else if (c == delimiter) treatDelimiter(buffer, text);
-            else buffer.appendToCurrentCell(c);
+        switch (quoteState){
+            case OUT -> {
+                SkAssertions.validChar(c);
+                buffer.appendToCell(c);
+            }
+            case IN -> buffer.appendToCell(c);
+            case ENCOUNTERED -> throw new CsvParsingException(text);
         }
-        if (chars[chars.length - 1] == delimiter || buffer.notEmpty()) buffer.appendCellToRow();
-        if (quoteState == QuoteState.IN) throw new CsvParsingException(text);
-        return buffer.row;
+    }
+
+    public SkCsv split(Iterable<String> lines){
+        Objects.requireNonNull(lines);
+        quoteState = QuoteState.OUT;
+        var buffer = new CsvBuffer();
+        for(var line : lines){
+            var chars = line.toCharArray();
+            for (char c : chars) {
+                if (c == quote) treatQuote(buffer, line);
+                else if (c == delimiter) treatDelimiter(buffer);
+                else treatChar(buffer, c, line);
+            }
+            if(quoteState != QuoteState.IN){
+                buffer.pushCell();
+                buffer.pushRow();
+                quoteState = QuoteState.OUT;
+            } else {
+                buffer.appendToCell('\n');
+            }
+        }
+        if (quoteState == QuoteState.IN)
+            throw new CsvParsingException(buffer.row.toString());
+        return buffer.csv;
+    }
+
+    static boolean isEscapedChar(char character) {
+        return switch (character) {
+            case '\n', '\r', '\b', '\f', '\0':
+                yield true;
+            default: yield false;
+        };
     }
 
     private String formatString(String value) {
+        Objects.requireNonNull(value);
         var needQuotes = false;
         var formatted = new StringBuilder();
-        formatted.append(quote);
         for (char c : value.toCharArray()) {
-            SkAssertions.validChar(c);
             if (c == quote) {
                 needQuotes = true;
                 formatted.append(quote).append(quote);
                 continue;
-            } else if (c == delimiter) {
+            } else if (c == delimiter || isEscapedChar(c)) {
                 needQuotes = true;
             }
             formatted.append(c);
         }
-        formatted.append(quote);
-        return needQuotes ? formatted.toString() : formatted.substring(1, formatted.length() - 1);
+        if(needQuotes) return quote + formatted.toString() + quote;
+        return formatted.toString();
     }
 
-    public String toCsvString(Iterable<String> values) {
+    String toCsvString(Iterable<String> values) {
         var csvString = new StringBuilder();
-        var tDelimiter = "";
+        var joiner = "";
         for (var value : values) {
-            csvString.append(tDelimiter).append(formatString(value));
-            tDelimiter = String.valueOf(delimiter);
+            csvString.append(joiner).append(formatString(value));
+            joiner = String.valueOf(delimiter);
         }
         return csvString.toString();
     }
