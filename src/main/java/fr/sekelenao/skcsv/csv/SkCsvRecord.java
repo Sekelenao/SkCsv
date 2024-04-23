@@ -23,6 +23,25 @@ public interface SkCsvRecord {
         }
     }
 
+    private static <T extends Record & SkCsvRecord> Iterable<String> generateHeaders(Class<T> type) {
+        Objects.requireNonNull(type);
+        var headers = new ArrayList<String>();
+        var fields =  type.getDeclaredFields();
+        for(var field: fields){
+            if(field.isAnnotationPresent(CsvColumn.class)){
+                var annotation = field.getAnnotation(CsvColumn.class);
+                var header = annotation.value();
+                if(header.isEmpty()){
+                    headers.add(field.getName());
+                } else {
+                    SkAssertions.conformValue(header);
+                    headers.add(header);
+                }
+            }
+        }
+        return headers;
+    }
+
     default Iterable<String> recordValues() {
         var components = this.getClass().getRecordComponents();
         var values = new ArrayList<String>(components.length);
