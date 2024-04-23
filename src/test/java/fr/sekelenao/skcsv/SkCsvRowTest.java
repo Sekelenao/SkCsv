@@ -1,9 +1,8 @@
 package fr.sekelenao.skcsv;
 
-import fr.sekelenao.skcsv.csv.SkCsvRow;
 import fr.sekelenao.skcsv.csv.CsvConfiguration;
-import fr.sekelenao.skcsv.exception.CsvParsingException;
-import fr.sekelenao.skcsv.exception.InvalidCsvValueException;
+import fr.sekelenao.skcsv.csv.SkCsv;
+import fr.sekelenao.skcsv.csv.SkCsvRow;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,10 +33,6 @@ final class SkCsvRowTest {
                     Arguments.of((Object) new String[]{null}),
                     Arguments.of((Object) new String[]{"wrong", null})
             );
-        }
-
-        static Stream<String> escapeStringsProvider() {
-            return Stream.of("Hello\n", "w\0rld", "I\r", "love\b", "\fJava !");
         }
 
         @Test
@@ -83,13 +78,6 @@ final class SkCsvRowTest {
             assertThrows(NullPointerException.class, () -> new SkCsvRow(wrongArray));
         }
 
-        @ParameterizedTest
-        @MethodSource("escapeStringsProvider")
-        @DisplayName("VarArgs constructor values assertions")
-        void byVarArgsValuesAssertions(String wrongString) {
-            assertThrows(InvalidCsvValueException.class, () -> new SkCsvRow(wrongString));
-        }
-
         @Test
         @DisplayName("Iterable constructor")
         void byIterable() {
@@ -119,132 +107,21 @@ final class SkCsvRowTest {
             );
         }
 
-        @ParameterizedTest
-        @MethodSource("escapeStringsProvider")
-        @DisplayName("Iterable constructor values assertions")
-        void byIterableAssertions(String wrongString) {
-            var lst = List.of(wrongString);
-            assertThrows(InvalidCsvValueException.class, () -> new SkCsvRow(lst));
-        }
-
     }
 
     @Nested
-    final class From {
+    @DisplayName("Inserts and add")
+    final class InsertAndAdd {
 
-        static Stream<Character> escapeCharsProvider() {
-            return Stream.of('\n', '\0', '\r', '\b', '\f');
-        }
 
         @Test
-        @DisplayName("From text with default config")
-        void fromText() {
-            var text = "\"Hello\"\"\";world;!;\";\";";
-            var row = SkCsvRow.from(text);
-            var row2 = SkCsvRow.from(";\"Hello\";world");
-            assertAll("from text default",
-                    () -> assertEquals(5, row.size()),
-                    () -> assertEquals("Hello\"", row.get(0)),
-                    () -> assertEquals("world", row.get(1)),
-                    () -> assertEquals("!", row.get(2)),
-                    () -> assertEquals(";", row.get(3)),
-                    () -> assertEquals("", row.get(4)),
-                    () -> assertEquals(text, row.toString()),
-                    () -> assertEquals(3, row2.size()),
-                    () -> assertEquals("", row2.get(0)),
-                    () -> assertEquals("Hello", row2.get(1))
-            );
-        }
-
-        @Test
-        @DisplayName("From text complex tests")
-        void fromTextComplex() {
-            assertAll("From text complex",
-                    () -> assertEquals("", SkCsvRow.from("\"\"").toString()),
-                    () -> assertEquals("\"", SkCsvRow.from("\"\"\"\"").getFirst()),
-                    () -> assertEquals(" ; ; ;", SkCsvRow.from(" ; ; ;").toString())
-            );
-        }
-
-        @Test
-        @DisplayName("From text with custom config")
-        void fromTextWithConfig() {
-            var defaultText = "Hello;world;!";
-            var customText = "'Hello,',world,'!'''";
-            var config = new CsvConfiguration(',', '\'');
-            var defaultRow = SkCsvRow.from(defaultText, config);
-            var customRow = SkCsvRow.from(customText, config);
-            assertAll("from text custom config",
-                    () -> assertEquals(1, defaultRow.size()),
-                    () -> assertEquals(3, customRow.size()),
-                    () -> assertEquals('"' + defaultText + '"', defaultRow.toString()),
-                    () -> assertEquals(defaultText, defaultRow.get(0)),
-                    () -> assertEquals("Hello,;world;!'", customRow.toString()),
-                    () -> assertEquals("Hello,", customRow.get(0)),
-                    () -> assertEquals("world", customRow.get(1)),
-                    () -> assertEquals("!'", customRow.get(2))
-            );
-        }
-
-        @Test
-        @DisplayName("Null assertions")
-        void fromTextNull() {
-            assertAll("Null assertions",
-                    () -> assertThrows(NullPointerException.class, () -> SkCsvRow.from(null)),
-                    () -> {
-                        var config = new CsvConfiguration(' ', '@');
-                        assertThrows(NullPointerException.class, () -> SkCsvRow.from(null, config));
-                    },
-                    () -> assertThrows(NullPointerException.class, () -> SkCsvRow.from("null", null))
-            );
-        }
-
-        @Test
-        @DisplayName("From text parsing exceptions")
-        void fromTextParsingAssertions() {
-            var config = new CsvConfiguration(',', '\'');
-            assertAll("From text default",
-                    () -> assertThrows(CsvParsingException.class, () -> SkCsvRow.from("Hello;\"world\"\";!")),
-                    () -> assertThrows(CsvParsingException.class, () -> SkCsvRow.from("Hello;\"world\"!\";!")),
-                    () -> assertThrows(CsvParsingException.class, () -> SkCsvRow.from("\"Hello;world!;!")),
-                    () -> assertThrows(CsvParsingException.class, () -> SkCsvRow.from("'Hello;world!;!", config)),
-                    () -> assertThrows(CsvParsingException.class, () -> SkCsvRow.from("'Hello'';world!;!", config)),
-                    () -> assertThrows(CsvParsingException.class, () -> SkCsvRow.from("Hello';'world!;!", config)),
-                    () -> assertThrows(CsvParsingException.class, () -> SkCsvRow.from("Hello'';world!;!", config)),
-                    () -> assertThrows(CsvParsingException.class, () -> SkCsvRow.from("''';world!;!", config)),
-                    () -> assertThrows(CsvParsingException.class, () -> SkCsvRow.from("Hello;world!;!;'", config)),
-                    () -> assertThrows(CsvParsingException.class, () -> SkCsvRow.from("'Hello,',world,'!''", config)),
-                    () -> assertThrows(CsvParsingException.class, () -> SkCsvRow.from("Hello,world,!''", config)),
-                    () -> assertThrows(CsvParsingException.class, () -> SkCsvRow.from("\"")),
-                    () -> assertThrows(CsvParsingException.class, () -> SkCsvRow.from("\"\"\""))
-            );
-        }
-
-        @ParameterizedTest
-        @MethodSource("escapeCharsProvider")
-        @DisplayName("From text invalid value exception")
-        void fromTextValuesAssertions(char wrongChar) {
-            assertThrows(InvalidCsvValueException.class, () -> SkCsvRow.from("Hello;wo" + wrongChar + "rld;!"));
-        }
-
-    }
-
-    @Nested
-    @DisplayName("Inserts and append")
-    final class InsertAndAppend {
-
-        static Stream<Character> escapeCharsProvider() {
-            return Stream.of('\n', '\0', '\r', '\b', '\f');
-        }
-
-        @Test
-        @DisplayName("Append")
-        void append() {
+        @DisplayName("add")
+        void add() {
             var row = new SkCsvRow();
-            row.append("Hello");
-            row.append("world");
-            row.append("!");
-            assertAll("Append",
+            row.add("Hello");
+            row.add("world");
+            row.add("!");
+            assertAll("add",
                     () -> assertEquals(3, row.size()),
                     () -> assertEquals("Hello;world;!", row.toString()),
                     () -> assertEquals("Hello", row.get(0)),
@@ -254,18 +131,10 @@ final class SkCsvRowTest {
         }
 
         @Test
-        @DisplayName("Append null assertions")
-        void appendNullAssertions() {
+        @DisplayName("add null assertions")
+        void addNullAssertions() {
             var emptyRow = new SkCsvRow();
-            assertThrows(NullPointerException.class, () -> emptyRow.append(null));
-        }
-
-        @ParameterizedTest
-        @MethodSource("escapeCharsProvider")
-        @DisplayName("Append wrong values assertions")
-        void appendWrongValues(char wrongChar) {
-            var emptyRow = new SkCsvRow();
-            assertThrows(InvalidCsvValueException.class, () -> emptyRow.append("He" + wrongChar + "llo"));
+            assertThrows(NullPointerException.class, () -> emptyRow.add(null));
         }
 
         @Test
@@ -304,14 +173,6 @@ final class SkCsvRowTest {
                     () -> assertThrows(IndexOutOfBoundsException.class, () -> row.insert(-1, "out")),
                     () -> assertThrows(IndexOutOfBoundsException.class, () -> row.insert(4, "out"))
             );
-        }
-
-        @ParameterizedTest
-        @MethodSource("escapeCharsProvider")
-        @DisplayName("Insert wrong values assertions")
-        void insertWrongValues(char wrongChar) {
-            var emptyRow = new SkCsvRow();
-            assertThrows(InvalidCsvValueException.class, () -> emptyRow.insert(0, "He" + wrongChar + "llo"));
         }
 
         @Test
@@ -385,38 +246,17 @@ final class SkCsvRowTest {
             );
         }
 
-        @ParameterizedTest
-        @MethodSource("escapeCharsProvider")
-        @DisplayName("Insert all wrong values assertions")
-        void insertAllWrongValues(char wrongChar) {
-            var row = helloWorldRow();
-            var lst = Collections.singleton("He" + wrongChar + "llo");
-            var array = new String[]{"He" + wrongChar + "llo"};
-            for (int i = 0; i < 4; i++) {
-                int finalI = i;
-                assertAll("Insert all wrong values",
-                        () -> assertThrows(InvalidCsvValueException.class, () -> row.insertAll(finalI, lst)),
-                        () -> assertThrows(InvalidCsvValueException.class, () -> row.insertAll(finalI, array))
-                );
-            }
-
-        }
-
     }
 
     @Nested
     @DisplayName("Set")
     final class SetTest {
 
-        static Stream<Character> escapeCharsProvider() {
-            return Stream.of('\n', '\0', '\r', '\b', '\f');
-        }
-
         @ParameterizedTest
         @ValueSource(ints = {0, 1, 2, 3, 4, 5, 6, 7})
         @DisplayName("Set all indices working")
         void setAllIndices(int index) {
-            var row = SkCsvRow.from("0;1;2;3;4;5;6;7");
+            var row = SkCsv.from(Collections.singleton("0;1;2;3;4;5;6;7")).getFirst();
             assertAll("Set all indices",
                     () -> assertEquals(String.valueOf(index), row.set(index, "replaced")),
                     () -> assertEquals("replaced", row.get(index))
@@ -427,7 +267,7 @@ final class SkCsvRowTest {
         @DisplayName("Set indices assertions")
         void setAllIndicesAssertions() {
             var emptyRow = new SkCsvRow();
-            var row = SkCsvRow.from("0;1;2;3;4;5;6;7");
+            var row = SkCsv.from(Collections.singleton("0;1;2;3;4;5;6;7")).getFirst();
             assertAll("Set indices assertions",
                     () -> assertThrows(IndexOutOfBoundsException.class, () -> row.set(-1, "wrong")),
                     () -> assertThrows(IndexOutOfBoundsException.class, () -> row.set(8, "wrong")),
@@ -440,14 +280,6 @@ final class SkCsvRowTest {
         void setNullAssertions() {
             var row = new SkCsvRow("One");
             assertThrows(NullPointerException.class, () -> row.set(0, null));
-        }
-
-        @ParameterizedTest
-        @MethodSource("escapeCharsProvider")
-        @DisplayName("Set wrong values assertions")
-        void setWrongValues(char wrongChar) {
-            var row = new SkCsvRow("One");
-            assertThrows(InvalidCsvValueException.class, () -> row.set(0, "He" + wrongChar + "llo"));
         }
 
     }
@@ -490,7 +322,7 @@ final class SkCsvRowTest {
         @ValueSource(ints = {0, 1, 2, 3, 4, 5, 6, 7})
         @DisplayName("Get all indices working")
         void getAllIndices(int index) {
-            var row = SkCsvRow.from("0;1;2;3;4;5;6;7");
+            var row = SkCsv.from(Collections.singleton("0;1;2;3;4;5;6;7")).getFirst();
             assertEquals(String.valueOf(index), row.get(index));
         }
 
@@ -498,7 +330,7 @@ final class SkCsvRowTest {
         @DisplayName("Get indices assertions")
         void getAllIndicesAssertions() {
             var emptyRow = new SkCsvRow();
-            var row = SkCsvRow.from("0;1;2;3;4;5;6;7");
+            var row = SkCsv.from(Collections.singleton("0;1;2;3;4;5;6;7")).getFirst();
             assertAll("Set indices assertions",
                     () -> assertThrows(IndexOutOfBoundsException.class, () -> row.get(-1)),
                     () -> assertThrows(IndexOutOfBoundsException.class, () -> row.get(8)),
@@ -509,7 +341,7 @@ final class SkCsvRowTest {
         @Test
         @DisplayName("Get first and last")
         void getFirstAndLast() {
-            var row = SkCsvRow.from("0;1;2;3;4;5;6;7");
+            var row = SkCsv.from(Collections.singleton("0;1;2;3;4;5;6;7")).getFirst();
             assertAll("Get first and last",
                     () -> assertEquals("0", row.getFirst()),
                     () -> assertEquals("7", row.getLast())
@@ -574,7 +406,7 @@ final class SkCsvRowTest {
         @Test
         @DisplayName("RemoveIf basic tests")
         void removeIf() {
-            var row = SkCsvRow.from("1;2;3;4;5;6;7;8;9;10");
+            var row = SkCsv.from(Collections.singleton("1;2;3;4;5;6;7;8;9;10")).getFirst();
             int expectedSize = row.size() / 2;
             assertAll("RemoveIf basic tests",
                     () -> assertTrue(row.removeIf(s -> (Integer.parseInt(s) & 1) == 0)),
@@ -601,7 +433,7 @@ final class SkCsvRowTest {
     @Nested
     final class Contains {
 
-        private static final SkCsvRow row = SkCsvRow.from("1;3;5;7;9");
+        private static final SkCsvRow row = SkCsv.from(Collections.singleton("1;3;5;7;9")).getFirst();
 
         @ParameterizedTest
         @ValueSource(ints = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
@@ -744,10 +576,6 @@ final class SkCsvRowTest {
     @DisplayName("Map")
     final class MapTest {
 
-        static Stream<Character> escapeCharsProvider() {
-            return Stream.of('\n', '\0', '\r', '\b', '\f');
-        }
-
         @Test
         @DisplayName("Map basic tests")
         void map() {
@@ -769,14 +597,6 @@ final class SkCsvRowTest {
                     () -> assertThrows(NullPointerException.class, () -> helloWorldRow.map(null)),
                     () -> assertThrows(NullPointerException.class, () -> helloWorldRow.map(s -> null))
             );
-        }
-
-        @ParameterizedTest
-        @MethodSource("escapeCharsProvider")
-        @DisplayName("Map invalid values assertions")
-        void mapValueAssertions(char wrongChar) {
-            var row = helloWorldRow();
-            assertThrows(InvalidCsvValueException.class, () -> row.map(s -> "" + wrongChar));
         }
 
     }
@@ -860,9 +680,9 @@ final class SkCsvRowTest {
             var rowAsString = row.toString();
             assertAll("toString basic tests",
                     () -> assertEquals("\"Hello\"\"\";world;!;\";\";", rowAsString),
-                    () -> assertEquals(row, SkCsvRow.from("\"Hello\"\"\";world;!;\";\";")),
+                    () -> assertEquals(row, SkCsv.from(Collections.singleton("\"Hello\"\"\";world;!;\";\";")).getFirst()),
                     () -> assertEquals(row.toString(), rowAsString),
-                    () -> assertEquals("\"\"\"\"", SkCsvRow.from("\"\"\"\"").toString())
+                    () -> assertEquals("\"\"\"\"", SkCsv.from(Collections.singleton("\"\"\"\"")).getFirst().toString())
             );
         }
 
@@ -877,6 +697,15 @@ final class SkCsvRowTest {
                     () -> assertEquals("Hello\",world,!,;,", row.toString(new CsvConfiguration(',', '\''))),
                     () -> assertEquals("'Hello''',world,!,',',''''", otherRow.toString(new CsvConfiguration(',', '\'')))
             );
+        }
+
+        @Test
+        @DisplayName("toString with newlines")
+        void toStringWithNewlines(){
+            var row = new SkCsvRow("hey", "cool\ncool");
+            assertEquals("""
+                    hey;"cool
+                    cool\"""", row.toString());
         }
 
     }
