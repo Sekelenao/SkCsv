@@ -699,9 +699,12 @@ final class SkCsvRowTest {
         void equals() {
             var row = helloWorldRow();
             var row2 = helloWorldRow();
+            var row3 = helloWorldRow();
+            row3.set(0, "false");
             assertAll("Equals basic tests",
                     () -> assertNotSame(row, row2),
                     () -> assertEquals(row, row2),
+                    () -> assertNotEquals(row, row3),
                     () -> {
                         row.set(0, "hello");
                         assertNotEquals(row, row2);
