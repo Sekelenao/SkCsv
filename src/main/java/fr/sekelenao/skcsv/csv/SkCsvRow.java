@@ -145,7 +145,7 @@ public class SkCsvRow implements Iterable<String> {
     }
 
     public boolean contains(Object value) {
-        return value instanceof String s && cells.contains(s);
+        return value != null && cells.stream().anyMatch(value::equals);
     }
 
     @Override
