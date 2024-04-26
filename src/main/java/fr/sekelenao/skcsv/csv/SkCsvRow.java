@@ -140,7 +140,8 @@ public class SkCsvRow implements Iterable<String> {
     }
 
     public boolean removeIf(Predicate<? super String> filter) {
-        return cells.removeIf(Objects.requireNonNull(filter));
+        Objects.requireNonNull(filter);
+        return cells.removeIf(filter);
     }
 
     public boolean contains(Object value) {
