@@ -330,6 +330,38 @@ final class SkCsvTest {
             );
         }
 
+        @Test
+        @DisplayName("Add all at end")
+        void addAll() {
+            var csv = csvTemplate();
+            csv.addAll(new SkCsvRow("(", "and Meta-verse", ")"), new SkCsvRow("Java"));
+            csv.addAll(List.of(new SkCsvRow("yes"), new SkCsvRow("ok")));
+            assertAll("Add all",
+                    () -> assertEquals(6, csv.size()),
+                    () -> assertEquals("""
+                                    ""\"Hello";world;"!;"
+                                    'Hello,;""\"second,""\";world;!';
+                                    (;and Meta-verse;)
+                                    Java
+                                    yes
+                                    ok
+                                    """
+                            , csv.toString())
+            );
+        }
+
+        @Test
+        @DisplayName("Insert all null assertions")
+        void addAllNullAssertions() {
+            var emptyCsv = new SkCsv();
+            var lst = Collections.singleton((SkCsvRow) null);
+            assertAll("Add all null",
+                    () -> assertThrows(NullPointerException.class, () -> emptyCsv.addAll((Iterable<SkCsvRow>) null)),
+                    () -> assertThrows(NullPointerException.class, () -> emptyCsv.addAll((SkCsvRow[]) null)),
+                    () -> assertThrows(NullPointerException.class, () -> emptyCsv.addAll(lst))
+            );
+        }
+
     }
 
     @Nested
