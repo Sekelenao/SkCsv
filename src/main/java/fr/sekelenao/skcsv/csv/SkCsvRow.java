@@ -76,10 +76,7 @@ public class SkCsvRow implements Iterable<String> {
         SkAssertions.validPosition(position, cells.size());
         Objects.requireNonNull(values);
         if (position == cells.size()) {
-            for (var value : values) {
-                Objects.requireNonNull(value);
-                cells.add(value);
-            }
+            addAll(values);
         } else {
             cells.addAll(position, Arrays.asList(values));
         }
@@ -89,10 +86,7 @@ public class SkCsvRow implements Iterable<String> {
         SkAssertions.validPosition(position, cells.size());
         Objects.requireNonNull(values);
         if (position == cells.size()) {
-            values.forEach(value -> {
-                Objects.requireNonNull(value);
-                cells.add(value);
-            });
+            addAll(values);
         } else {
             var lst = new ArrayList<String>();
             for (var value : values) {
