@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 public class SkCsvRow implements Iterable<String> {
 
-    private final ArrayList<String> cells = new ArrayList<>();
+    private final List<String> cells = new ArrayList<>();
 
     public SkCsvRow() {}
 
