@@ -4,7 +4,6 @@ import fr.sekelenao.skcsv.csv.SkCsv;
 import fr.sekelenao.skcsv.csv.SkCsvConfig;
 import fr.sekelenao.skcsv.csv.SkCsvRecord;
 import fr.sekelenao.skcsv.csv.SkCsvRecords;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
