@@ -18,7 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public final class SkCsvRecordTest {
+final class SkCsvRecordTest {
 
     public record Animal(@CsvColumn String name, float ignored,
                          @CsvColumn("Number of legs") int legs) implements SkCsvRecord {
