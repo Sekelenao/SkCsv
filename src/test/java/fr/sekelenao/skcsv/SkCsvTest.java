@@ -682,12 +682,15 @@ final class SkCsvTest {
         void hashcode() {
             var csv1 = csvTemplate();
             var csv2 = csvTemplate();
+            var csv3 = new SkCsv();
             assertAll("Equals basic tests",
                     () -> assertEquals(csv1.hashCode(), csv2.hashCode()),
                     () -> {
                         csv1.set(0, new SkCsvRow());
                         assertNotEquals(csv1.hashCode(), csv2.hashCode());
-                    }
+                    },
+                    () -> assertNotEquals(csv1.hashCode(), csv3.hashCode()),
+                    () -> assertNotEquals(csv2.hashCode(), csv3.hashCode())
             );
         }
 
