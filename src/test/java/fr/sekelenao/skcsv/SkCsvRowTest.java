@@ -110,6 +110,27 @@ final class SkCsvRowTest {
     }
 
     @Nested
+    @DisplayName("Empty and blank tests")
+    final class IsEmptyOrBlank {
+
+        @Test
+        @DisplayName("Is empty test")
+        void isEmptyOrBlank() {
+            var row = new SkCsvRow();
+            assertAll("Empty tests",
+                    () -> assertTrue(row.isEmpty()),
+                    () -> assertTrue(row.isBlank()),
+                    () -> {
+                        row.addAll("     ", "\n", "\t");
+                        assertTrue(row.isBlank());
+                        assertFalse(row.isEmpty());
+                    }
+            );
+        }
+
+    }
+
+    @Nested
     @DisplayName("Inserts and add")
     final class InsertAndAdd {
 
@@ -701,7 +722,7 @@ final class SkCsvRowTest {
 
         @Test
         @DisplayName("toString with newlines")
-        void toStringWithNewlines(){
+        void toStringWithNewlines() {
             var row = new SkCsvRow("hey", "cool\ncool");
             assertEquals("""
                     hey;"cool
