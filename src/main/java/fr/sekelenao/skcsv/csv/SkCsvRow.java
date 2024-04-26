@@ -149,7 +149,8 @@ public class SkCsvRow implements Iterable<String> {
 
     @Override
     public void forEach(Consumer<? super String> action) {
-        cells.forEach(Objects.requireNonNull(action));
+        Objects.requireNonNull(action);
+        cells.forEach(action);
     }
 
     @Override
@@ -176,11 +177,11 @@ public class SkCsvRow implements Iterable<String> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        Objects.requireNonNull(o);
-        return o instanceof SkCsvRow other
-                && other.cells.size() == cells.size()
-                && other.cells.equals(cells);
+    public boolean equals(Object other) {
+        Objects.requireNonNull(other);
+        return other instanceof SkCsvRow otherRow
+                && otherRow.cells.size() == cells.size()
+                && otherRow.cells.equals(cells);
     }
 
     @Override
