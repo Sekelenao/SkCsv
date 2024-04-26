@@ -83,10 +83,7 @@ public class SkCsv implements Iterable<SkCsvRow> {
         SkAssertions.validPosition(position, skCsvRows.size());
         Objects.requireNonNull(rows);
         if (position == skCsvRows.size()) {
-            for (var row : rows) {
-                Objects.requireNonNull(row);
-                skCsvRows.add(row);
-            }
+            addAll(rows);
         } else {
             skCsvRows.addAll(position, Arrays.asList(rows));
         }
@@ -96,10 +93,7 @@ public class SkCsv implements Iterable<SkCsvRow> {
         SkAssertions.validPosition(position, skCsvRows.size());
         Objects.requireNonNull(rows);
         if (position == skCsvRows.size()) {
-            rows.forEach(row -> {
-                Objects.requireNonNull(row);
-                skCsvRows.add(row);
-            });
+            addAll(rows);
         } else {
             var lst = new ArrayList<SkCsvRow>();
             for (var row : rows) {
