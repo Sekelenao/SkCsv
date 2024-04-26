@@ -57,6 +57,22 @@ public class SkCsv implements Iterable<SkCsvRow> {
         skCsvRows.add(row);
     }
 
+    public void addAll(Iterable<SkCsvRow> rows){
+        Objects.requireNonNull(rows);
+        for (var row : rows) {
+            Objects.requireNonNull(row);
+            skCsvRows.add(row);
+        }
+    }
+
+    public void addAll(SkCsvRow... rows){
+        Objects.requireNonNull(rows);
+        for (var row : rows) {
+            Objects.requireNonNull(row);
+            skCsvRows.add(row);
+        }
+    }
+
     public void insert(int position, SkCsvRow row) {
         SkAssertions.validPosition(position, skCsvRows.size());
         Objects.requireNonNull(row);
