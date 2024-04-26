@@ -249,15 +249,17 @@ final class SkCsvTest {
         @DisplayName("Insert all at end")
         void insertAllAtEnd() {
             var csv = csvTemplate();
-            csv.insertAll(csv.size(), new SkCsvRow("(", "and Meta-verse", ")"));
-            csv.insertAll(csv.size(), List.of(new SkCsvRow("yes")));
+            csv.insertAll(csv.size(), new SkCsvRow("(", "and Meta-verse", ")"), new SkCsvRow("Java"));
+            csv.insertAll(csv.size(), List.of(new SkCsvRow("yes"), new SkCsvRow("ok")));
             assertAll("Insert all at end",
-                    () -> assertEquals(4, csv.size()),
+                    () -> assertEquals(6, csv.size()),
                     () -> assertEquals("""
                                     ""\"Hello";world;"!;"
                                     'Hello,;""\"second,""\";world;!';
                                     (;and Meta-verse;)
+                                    Java
                                     yes
+                                    ok
                                     """
                             , csv.toString())
             );
@@ -267,13 +269,15 @@ final class SkCsvTest {
         @DisplayName("Insert all at start")
         void insertAllAtStart() {
             var csv = csvTemplate();
-            csv.insertAll(0, new SkCsvRow("(", "and Meta-verse", ")"));
-            csv.insertAll(0, List.of(new SkCsvRow()));
+            csv.insertAll(0, new SkCsvRow("(", "and Meta-verse", ")"), new SkCsvRow());
+            csv.insertAll(0, List.of(new SkCsvRow(), new SkCsvRow()));
             assertAll("Insert all at start",
-                    () -> assertEquals(4, csv.size()),
+                    () -> assertEquals(6, csv.size()),
                     () -> assertEquals("""
                                     
+                                    
                                     (;and Meta-verse;)
+                                    
                                     ""\"Hello";world;"!;"
                                     'Hello,;""\"second,""\";world;!';
                                     """
@@ -285,12 +289,16 @@ final class SkCsvTest {
         @DisplayName("Insert all")
         void insertAll() {
             var csv = csvTemplate();
-            csv.insertAll(1, List.of(new SkCsvRow("(", "and Meta-verse", ")")));
+            csv.insertAll(1, List.of(new SkCsvRow("(", "and Meta-verse", ")"), new SkCsvRow()));
+            csv.insertAll(1, new SkCsvRow("1"), new SkCsvRow("2"));
             assertAll("Insert all",
-                    () -> assertEquals(3, csv.size()),
+                    () -> assertEquals(6, csv.size()),
                     () -> assertEquals("""
                                     ""\"Hello";world;"!;"
+                                    1
+                                    2
                                     (;and Meta-verse;)
+                                    
                                     'Hello,;""\"second,""\";world;!';
                                     """
                             , csv.toString())
