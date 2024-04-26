@@ -112,12 +112,12 @@ public class SkCsv implements Iterable<SkCsvRow> {
 
     public SkCsvRow getFirst() {
         if (skCsvRows.isEmpty()) throw new NoSuchElementException();
-        return skCsvRows.getFirst();
+        return skCsvRows.get(0);
     }
 
     public SkCsvRow getLast() {
         if (skCsvRows.isEmpty()) throw new NoSuchElementException();
-        return skCsvRows.getLast();
+        return skCsvRows.get(skCsvRows.size() - 1);
     }
 
     public SkCsvRow remove(int index) {

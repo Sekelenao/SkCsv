@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -24,12 +25,15 @@ public interface SkCsvRecord {
             return accessor.invoke(instance);
         } catch (IllegalAccessException e) {
             throw new IllegalAccessError();
-        } catch (InvocationTargetException exception) {
-            switch (exception.getCause()) {
-                case RuntimeException e -> throw e;
-                case Error e -> throw e;
-                default -> throw new AssertionError();
+        } catch (InvocationTargetException e) {
+            var cause = e.getCause();
+            if (cause instanceof RuntimeException exception) {
+                throw exception;
             }
+            if (cause instanceof Error error) {
+                throw error;
+            }
+            throw new UndeclaredThrowableException(e);
         }
     }
 

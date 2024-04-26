@@ -58,10 +58,10 @@ final class SkCsvRecordTest {
             assertAll("With annotation and header",
                     () -> assertEquals(4, csv.size()),
                     () -> assertEquals(2, csv.getFirst().size()),
-                    () -> assertEquals(ANIMALS.getFirst().name, csv.get(1).getFirst()),
+                    () -> assertEquals(ANIMALS.get(0).name, csv.get(1).getFirst()),
                     () -> assertEquals(ANIMALS.get(1).name, csv.get(2).getFirst()),
                     () -> assertEquals(ANIMALS.get(2).name, csv.get(3).getFirst()),
-                    () -> assertEquals(ANIMALS.getLast().legs, Integer.parseInt(csv.getLast().getLast()))
+                    () -> assertEquals(ANIMALS.get(ANIMALS.size() - 1).legs, Integer.parseInt(csv.getLast().getLast()))
             );
             Files.deleteIfExists(PATH);
             SkCsvRecords.export(PATH, ANIMALS, SkCsvConfig.COMMA, StandardOpenOption.CREATE);
@@ -82,10 +82,10 @@ final class SkCsvRecordTest {
             assertAll("With annotation and header",
                     () -> assertEquals(3, csv.size()),
                     () -> assertEquals(2, csv.getFirst().size()),
-                    () -> assertEquals(FOODS.getFirst().name, csv.get(0).getFirst()),
+                    () -> assertEquals(FOODS.get(0).name, csv.get(0).getFirst()),
                     () -> assertEquals(FOODS.get(1).name, csv.get(1).getFirst()),
                     () -> assertEquals(FOODS.get(2).name, csv.get(2).getFirst()),
-                    () -> assertEquals(FOODS.getLast().color.toUpperCase(), csv.getLast().getLast())
+                    () -> assertEquals(FOODS.get(FOODS.size() - 1).color.toUpperCase(), csv.getLast().getLast())
             );
             Files.deleteIfExists(PATH);
             SkCsvRecords.export(PATH, FOODS, SkCsvConfig.COMMA, StandardOpenOption.CREATE);

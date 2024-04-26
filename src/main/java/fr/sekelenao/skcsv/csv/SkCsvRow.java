@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 public class SkCsvRow implements Iterable<String> {
 
-    private final List<String> cells = new ArrayList<>();
+    private final ArrayList<String> cells = new ArrayList<>();
 
     public SkCsvRow() {}
 
@@ -21,7 +21,7 @@ public class SkCsvRow implements Iterable<String> {
         Objects.requireNonNull(array);
         for (var value : array) {
             Objects.requireNonNull(value);
-            cells.addLast(value);
+            cells.add(value);
         }
     }
 
@@ -29,7 +29,7 @@ public class SkCsvRow implements Iterable<String> {
         Objects.requireNonNull(iterable);
         for (var value : iterable) {
             Objects.requireNonNull(value);
-            cells.addLast(value);
+            cells.add(value);
         }
     }
 
@@ -47,7 +47,7 @@ public class SkCsvRow implements Iterable<String> {
 
     public void add(String value) {
         Objects.requireNonNull(value);
-        cells.addLast(value);
+        cells.add(value);
     }
 
     public void addAll(Iterable<String> values){
@@ -78,15 +78,10 @@ public class SkCsvRow implements Iterable<String> {
         if (position == cells.size()) {
             for (var value : values) {
                 Objects.requireNonNull(value);
-                this.add(value);
+                cells.add(value);
             }
         } else {
-            var lst = new ArrayList<String>();
-            for (var value : values) {
-                Objects.requireNonNull(value);
-                lst.add(value);
-            }
-            cells.addAll(position, lst);
+            cells.addAll(position, Arrays.asList(values));
         }
     }
 
@@ -96,7 +91,7 @@ public class SkCsvRow implements Iterable<String> {
         if (position == cells.size()) {
             values.forEach(value -> {
                 Objects.requireNonNull(value);
-                this.add(value);
+                cells.add(value);
             });
         } else {
             var lst = new ArrayList<String>();
@@ -116,7 +111,7 @@ public class SkCsvRow implements Iterable<String> {
 
     public void fill(int amount) {
         SkAssertions.positive(amount);
-        for (int i = 0; i < amount; i++) add("");
+        for (int i = 0; i < amount; i++) cells.add("");
     }
 
     public String get(int index) {
@@ -126,12 +121,12 @@ public class SkCsvRow implements Iterable<String> {
 
     public String getFirst() {
         if (cells.isEmpty()) throw new NoSuchElementException();
-        return cells.getFirst();
+        return cells.get(0);
     }
 
     public String getLast() {
         if (cells.isEmpty()) throw new NoSuchElementException();
-        return cells.getLast();
+        return cells.get(cells.size() - 1);
     }
 
     public String remove(int index) {

@@ -581,7 +581,7 @@ final class SkCsvTest {
             it.forEachRemaining(lst::add);
             assertAll("For each remaining working",
                     () -> assertEquals(1, lst.size()),
-                    () -> assertEquals(new SkCsvRow("'Hello,", "\"second,\"", "world", "!'", ""), lst.getFirst())
+                    () -> assertEquals(new SkCsvRow("'Hello,", "\"second,\"", "world", "!'", ""), lst.get(0))
             );
         }
 
