@@ -454,6 +454,13 @@ final class SkCsvRowTest {
     @Nested
     final class Contains {
 
+        private record Citation(String value) {
+            @Override
+            public boolean equals(Object obj) {
+                return obj instanceof String str && str.equals(value);
+            }
+        }
+
         private static final SkCsvRow row = SkCsv.from(Collections.singleton("1;3;5;7;9")).getFirst();
 
         @ParameterizedTest
@@ -464,6 +471,18 @@ final class SkCsvRowTest {
                     () -> assertEquals((value & 1) == 1, row.contains(String.valueOf(value))),
                     () -> assertFalse(row.contains(value)),
                     () -> assertFalse(row.contains(null))
+            );
+        }
+
+        @Test
+        @DisplayName("Contains with custom equals")
+        void containsWithCustomEquals() {
+            var row = new SkCsvRow("Hey", "a quote is a quote");
+            assertAll("Contains with custom equals",
+                    () -> assertTrue(row.contains(new Citation("a quote is a quote"))),
+                    () -> assertTrue(row.contains("a quote is a quote")),
+                    () -> assertFalse(row.contains("Yes")),
+                    () -> assertFalse(row.contains(new Citation("Yes")))
             );
         }
 
