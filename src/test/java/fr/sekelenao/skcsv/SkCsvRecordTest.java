@@ -4,19 +4,20 @@ import fr.sekelenao.skcsv.csv.SkCsv;
 import fr.sekelenao.skcsv.csv.SkCsvConfig;
 import fr.sekelenao.skcsv.csv.SkCsvRecord;
 import fr.sekelenao.skcsv.csv.SkCsvRecords;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 final class SkCsvRecordTest {
 
@@ -95,6 +96,20 @@ final class SkCsvRecordTest {
                     () -> assertEquals(2, csv2.getFirst().size())
             );
             Files.deleteIfExists(PATH);
+        }
+
+    }
+
+    @Nested
+    final class Constructor {
+
+        @Test
+        @DisplayName("Constructor is private and throw")
+        void privateConstructor() throws NoSuchMethodException {
+            var constructor = SkCsvRecords.class.getDeclaredConstructor();
+            assertThrows(IllegalAccessException.class, constructor::newInstance);
+            constructor.setAccessible(true);
+            assertThrows(InvocationTargetException.class, constructor::newInstance);
         }
 
     }
