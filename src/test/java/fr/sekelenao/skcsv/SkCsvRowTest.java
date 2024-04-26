@@ -267,6 +267,35 @@ final class SkCsvRowTest {
             );
         }
 
+        @Test
+        @DisplayName("Add all")
+        void addAll() {
+            var row = helloWorldRow();
+            row.addAll(List.of("(", "and Meta-verse", ")"));
+            var row2 = row.copy();
+            row2.addAll(Collections.emptyList());
+            var row3 = row.copy();
+            row3.addAll("(", "and Meta-verse", ")");
+            assertAll("addAll",
+                    () -> assertEquals(6, row.size()),
+                    () -> assertEquals("Hello;world;!;(;and Meta-verse;)", row.toString()),
+                    () -> assertEquals("Hello;world;!;(;and Meta-verse;)", row2.toString()),
+                    () -> assertEquals("Hello;world;!;(;and Meta-verse;);(;and Meta-verse;)", row3.toString())
+            );
+        }
+
+        @Test
+        @DisplayName("Add all null assertions")
+        void addAllNullAssertions() {
+            var emptyRow = new SkCsvRow();
+            var lst = Collections.singleton((String) null);
+            assertAll("Add all null",
+                    () -> assertThrows(NullPointerException.class, () -> emptyRow.addAll((Iterable<String>) null)),
+                    () -> assertThrows(NullPointerException.class, () -> emptyRow.addAll((String[]) null)),
+                    () -> assertThrows(NullPointerException.class, () -> emptyRow.addAll(lst))
+            );
+        }
+
     }
 
     @Nested
