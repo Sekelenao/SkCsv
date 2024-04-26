@@ -79,6 +79,10 @@ public class SkCsvRow implements Iterable<String> {
         return cells.isEmpty();
     }
 
+    public boolean isBlank(){
+        return cells.stream().allMatch(String::isBlank);
+    }
+
     /**
      * Appends a cell to the end of this CsvRow.
      *
@@ -88,6 +92,16 @@ public class SkCsvRow implements Iterable<String> {
     public void add(String value) {
         Objects.requireNonNull(value);
         cells.addLast(value);
+    }
+
+    public void addAll(Iterable<String> values){
+        Objects.requireNonNull(values);
+        values.forEach(this::add);
+    }
+
+    public void addAll(String... values){
+        Objects.requireNonNull(values);
+        Arrays.stream(values).forEach(this::add);
     }
 
     /**
