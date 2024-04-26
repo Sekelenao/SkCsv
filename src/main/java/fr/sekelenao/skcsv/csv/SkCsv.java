@@ -72,12 +72,7 @@ public class SkCsv implements Iterable<SkCsvRow> {
                 skCsvRows.add(row);
             }
         } else {
-            var lst = new ArrayList<SkCsvRow>();
-            for (var row : rows) {
-                Objects.requireNonNull(row);
-                lst.add(row);
-            }
-            skCsvRows.addAll(position, lst);
+            skCsvRows.addAll(position, Arrays.asList(rows));
         }
     }
 
