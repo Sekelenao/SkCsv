@@ -96,12 +96,18 @@ public class SkCsvRow implements Iterable<String> {
 
     public void addAll(Iterable<String> values){
         Objects.requireNonNull(values);
-        values.forEach(this::add);
+        for (var value : values) {
+            Objects.requireNonNull(value);
+            cells.add(value);
+        }
     }
 
     public void addAll(String... values){
         Objects.requireNonNull(values);
-        Arrays.stream(values).forEach(this::add);
+        for (var value : values) {
+            Objects.requireNonNull(value);
+            cells.add(value);
+        }
     }
 
     /**
