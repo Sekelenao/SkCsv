@@ -14,9 +14,7 @@ public interface SkCsvRecord {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.RECORD_COMPONENT})
-    @interface CsvColumn {
-        String value() default "";
-    }
+    @interface CsvColumn {}
 
     private static Object secureInvoke(Method accessor, Object instance) {
         Objects.requireNonNull(accessor);

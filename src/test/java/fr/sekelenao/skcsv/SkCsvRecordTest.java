@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 final class SkCsvRecordTest {
 
     public record Animal(@CsvColumn String name, float ignored,
-                         @CsvColumn("Number of legs") int legs) implements SkCsvRecord {
+                         @CsvColumn int legs) implements SkCsvRecord {
     }
 
     public record Food(String name, String color) implements SkCsvRecord {
@@ -53,20 +53,20 @@ final class SkCsvRecordTest {
         @Test
         @DisplayName("Export with annotation and default methods")
         void exportWithAnnotation() throws IOException {
-            SkCsvRecords.exportWithHeaders(PATH, ANIMALS, SkCsvConfig.SEMICOLON, StandardOpenOption.CREATE);
+            SkCsvRecords.export(PATH, ANIMALS, SkCsvConfig.SEMICOLON, StandardOpenOption.CREATE);
             var csv = SkCsv.from(PATH);
             assertAll("With annotation and header",
-                    () -> assertEquals(4, csv.size()),
+                    () -> assertEquals(3, csv.size()),
                     () -> assertEquals(2, csv.getFirst().size()),
-                    () -> assertEquals(ANIMALS.get(0).name, csv.get(1).getFirst()),
-                    () -> assertEquals(ANIMALS.get(1).name, csv.get(2).getFirst()),
-                    () -> assertEquals(ANIMALS.get(2).name, csv.get(3).getFirst()),
+                    () -> assertEquals(ANIMALS.get(0).name, csv.get(0).getFirst()),
+                    () -> assertEquals(ANIMALS.get(1).name, csv.get(1).getFirst()),
+                    () -> assertEquals(ANIMALS.get(2).name, csv.get(2).getFirst()),
                     () -> assertEquals(ANIMALS.get(ANIMALS.size() - 1).legs, Integer.parseInt(csv.getLast().getLast()))
             );
             Files.deleteIfExists(PATH);
             SkCsvRecords.export(PATH, ANIMALS, SkCsvConfig.COMMA, StandardOpenOption.CREATE);
             var csv2 = SkCsv.from(PATH, SkCsvConfig.COMMA);
-            assertAll("With annotation without header",
+            assertAll("With annotation and config",
                     () -> assertEquals(3, csv2.size()),
                     () -> assertEquals(2, csv2.getFirst().size())
             );
@@ -76,10 +76,10 @@ final class SkCsvRecordTest {
         @Test
         @DisplayName("Export with annotation and override methods")
         void exportWithAnnotationOverride() throws IOException {
-            SkCsvRecords.exportWithHeaders(PATH, FOODS, SkCsvConfig.SEMICOLON, StandardOpenOption.CREATE);
+            SkCsvRecords.export(PATH, FOODS, SkCsvConfig.SEMICOLON, StandardOpenOption.CREATE);
             var csv = SkCsv.from(PATH);
             System.out.println(csv);
-            assertAll("With annotation and header",
+            assertAll("With annotation",
                     () -> assertEquals(3, csv.size()),
                     () -> assertEquals(2, csv.getFirst().size()),
                     () -> assertEquals(FOODS.get(0).name, csv.get(0).getFirst()),
@@ -90,7 +90,7 @@ final class SkCsvRecordTest {
             Files.deleteIfExists(PATH);
             SkCsvRecords.export(PATH, FOODS, SkCsvConfig.COMMA, StandardOpenOption.CREATE);
             var csv2 = SkCsv.from(PATH, SkCsvConfig.COMMA);
-            assertAll("With annotation without header",
+            assertAll("With annotation and config",
                     () -> assertEquals(3, csv2.size()),
                     () -> assertEquals(2, csv2.getFirst().size())
             );
