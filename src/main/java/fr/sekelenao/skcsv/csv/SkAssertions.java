@@ -31,7 +31,7 @@ final class SkAssertions {
             throw new IndexOutOfBoundsException("Position " + position + " out of bounds for length " + size);
     }
 
-    public static void requireNonNulls(Object... objects){
+    static void requireNonNulls(Object... objects) {
         Arrays.stream(objects).forEach(Objects::requireNonNull);
     }
 
