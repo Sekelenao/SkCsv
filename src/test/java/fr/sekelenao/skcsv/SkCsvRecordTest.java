@@ -16,7 +16,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -78,7 +77,7 @@ final class SkCsvRecordTest {
             new Food("Fish", "Blue", "Contains fish...")
     );
 
-    private static final Iterator<BankAccount> bankAccountIterator = new Iterator<BankAccount>() {
+    private static final Iterator<BankAccount> bankAccountIterator = new Iterator<>() {
 
         private int index;
 
@@ -91,7 +90,7 @@ final class SkCsvRecordTest {
 
         @Override
         public BankAccount next() {
-            if(!hasNext()) throw new NoSuchElementException();
+            if (!hasNext()) throw new NoSuchElementException();
             index++;
             return new BankAccount("OnlyBank", UUID.randomUUID(), RANDOM.nextDouble(), FOODS.get(RANDOM.nextInt(FOODS.size())));
         }
