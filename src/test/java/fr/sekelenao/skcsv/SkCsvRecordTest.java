@@ -146,7 +146,7 @@ final class SkCsvRecordTest {
         @DisplayName("Export a lot")
         @Timeout(3)
         @Order(1)
-        void exportALot() throws IOException {
+        void exportALot() {
             assertDoesNotThrow(() -> SkCsvRecords.export(PRODUCED_PATH, bankAccountIterator, SkCsvConfig.SEMICOLON, StandardOpenOption.CREATE));
 
         }
