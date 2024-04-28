@@ -199,11 +199,11 @@ public class SkCsv implements Iterable<SkCsvRow> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        Objects.requireNonNull(o);
-        return o instanceof SkCsv other
-                && other.skCsvRows.size() == skCsvRows.size()
-                && other.skCsvRows.equals(skCsvRows);
+    public boolean equals(Object other) {
+        Objects.requireNonNull(other);
+        return other instanceof SkCsv otherCsv
+                && otherCsv.skCsvRows.size() == skCsvRows.size()
+                && otherCsv.skCsvRows.equals(skCsvRows);
     }
 
     @Override
