@@ -2,6 +2,9 @@ package fr.sekelenao.skcsv.csv;
 
 import fr.sekelenao.skcsv.exception.InvalidCsvValueException;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 final class SkAssertions {
 
     private SkAssertions() {
@@ -28,6 +31,8 @@ final class SkAssertions {
             throw new IndexOutOfBoundsException("Position " + position + " out of bounds for length " + size);
     }
 
-
+    public static void requireNonNulls(Object... objects){
+        Arrays.stream(objects).forEach(Objects::requireNonNull);
+    }
 
 }
