@@ -1,4 +1,4 @@
-package fr.sekelenao.skcsv.csv;
+package fr.sekelenao.skcsv;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

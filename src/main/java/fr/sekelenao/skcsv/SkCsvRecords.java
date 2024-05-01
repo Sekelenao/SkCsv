@@ -1,4 +1,4 @@
-package fr.sekelenao.skcsv.csv;
+package fr.sekelenao.skcsv;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

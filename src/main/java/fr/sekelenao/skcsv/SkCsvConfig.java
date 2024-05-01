@@ -1,4 +1,4 @@
-package fr.sekelenao.skcsv.csv;
+package fr.sekelenao.skcsv;
 
 public record SkCsvConfig(char delimiter, char quote) {
 
