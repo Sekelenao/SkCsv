@@ -454,6 +454,40 @@ final class SkCsvRowTest {
         }
 
         @Test
+        @DisplayName("Remove first and last")
+        void removeFirstAndLast() {
+            int count = 0;
+            var row1 = helloWorldRow();
+            while (!row1.isEmpty()) {
+                assertEquals(row1.getFirst(), row1.removeFirst());
+                count++;
+                assertEquals(3 - count, row1.size());
+            }
+            assertEquals(3, count);
+            count = 0;
+            var row2 = helloWorldRow();
+            while (!row2.isEmpty()) {
+                assertEquals(row2.getLast(), row2.removeLast());
+                count++;
+                assertEquals(3 - count, row2.size());
+            }
+            assertEquals(3, count);
+        }
+
+        @Test
+        @DisplayName("Remove first and last assertions")
+        void removeFirstAndLastAssertions() {
+            var row = helloWorldRow();
+            row.removeFirst();
+            row.removeLast();
+            row.removeFirst();
+            assertAll("Remove first and last assertions",
+                    () -> assertThrows(NoSuchElementException.class, row::removeFirst),
+                    () -> assertThrows(NoSuchElementException.class, row::removeLast)
+            );
+        }
+
+        @Test
         @DisplayName("RemoveIf basic tests")
         void removeIf() {
             var row = SkCsv.from(Collections.singleton("1;2;3;4;5;6;7;8;9;10")).getFirst();

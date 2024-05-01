@@ -128,6 +128,16 @@ public class SkCsvRow implements Iterable<String> {
         return cells.remove(index);
     }
 
+    public String removeFirst(){
+        if (cells.isEmpty()) throw new NoSuchElementException();
+        return cells.remove(0);
+    }
+
+    public String removeLast() {
+        if (cells.isEmpty()) throw new NoSuchElementException();
+        return cells.remove(cells.size() - 1);
+    }
+
     public boolean removeIf(Predicate<? super String> filter) {
         Objects.requireNonNull(filter);
         return cells.removeIf(filter);
