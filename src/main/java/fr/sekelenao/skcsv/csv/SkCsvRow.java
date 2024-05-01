@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 public class SkCsvRow implements Iterable<String> {
@@ -170,6 +171,14 @@ public class SkCsvRow implements Iterable<String> {
             Objects.requireNonNull(mappedValue);
             it.set(mappedValue);
         }
+    }
+
+    public static Collector<String, SkCsvRow, SkCsvRow> collector(){
+        return Collector.of(
+                SkCsvRow::new, SkCsvRow::addAll,
+                (csv1, csv2) -> {csv1.addAll(csv2); return csv1;},
+                Collector.Characteristics.IDENTITY_FINISH
+        );
     }
 
     public SkCsvRow copy() {

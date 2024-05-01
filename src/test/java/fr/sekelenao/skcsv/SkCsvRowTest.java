@@ -708,6 +708,26 @@ final class SkCsvRowTest {
     }
 
     @Nested
+    @DisplayName("Collector")
+    final class CollectorTest {
+
+        @Test
+        @DisplayName("Collector is working")
+        void collector() {
+            var row = new SkCsvRow("x", "y", "z", "x", "z", "y");
+            var row2 = row.stream()
+                    .filter(s -> !s.equals("z"))
+                    .collect(SkCsvRow.collector());
+            var row3 = row.stream().collect(SkCsvRow.collector());
+            assertAll("Collector",
+                    () -> assertEquals(new SkCsvRow("x", "y", "x", "y"), row2),
+                    () -> assertEquals(row, row3)
+            );
+        }
+
+    }
+
+    @Nested
     final class Copy {
 
         @Test

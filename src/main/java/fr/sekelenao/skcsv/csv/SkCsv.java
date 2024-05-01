@@ -6,9 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SkCsv implements Iterable<SkCsvRow> {
@@ -172,6 +172,14 @@ public class SkCsv implements Iterable<SkCsvRow> {
         }
     }
 
+    public static Collector<SkCsvRow, SkCsv, SkCsv> collector(){
+        return Collector.of(
+                SkCsv::new, SkCsv::addAll,
+                (csv1, csv2) -> {csv1.addAll(csv2); return csv1;},
+                Collector.Characteristics.IDENTITY_FINISH
+        );
+    }
+
     public static SkCsv from(Path path, SkCsvConfig config) throws IOException {
         Objects.requireNonNull(path);
         Objects.requireNonNull(config);
@@ -233,6 +241,12 @@ public class SkCsv implements Iterable<SkCsvRow> {
             builder.append(formatter.toCsvString(row)).append("\n");
         }
         return builder.toString();
+    }
+
+    public static void main(String[] args) {
+        var row = new SkCsvRow("x", "y", "z", "x", "z", "y");
+        var row2 = row.stream().filter(s -> !s.equals("z")).collect(SkCsvRow.collector());
+        System.out.println(row2);
     }
 
 }

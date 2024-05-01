@@ -732,6 +732,38 @@ final class SkCsvTest {
     }
 
     @Nested
+    @DisplayName("Collector")
+    final class CollectorTest {
+
+        @Test
+        @DisplayName("Collector is working")
+        void collector() {
+            var csv = new SkCsv(
+                    new SkCsvRow("x"),
+                    new SkCsvRow("y"),
+                    new SkCsvRow("z"),
+                    new SkCsvRow("x"),
+                    new SkCsvRow("z"),
+                    new SkCsvRow("y")
+            );
+            var csv2 = csv.stream()
+                    .filter(s -> !s.contains("z"))
+                    .collect(SkCsv.collector());
+            var csv3 = csv.stream().collect(SkCsv.collector());
+            assertAll("Collector",
+                    () -> assertEquals(new SkCsv(
+                            new SkCsvRow("x"),
+                            new SkCsvRow("y"),
+                            new SkCsvRow("x"),
+                            new SkCsvRow("y")
+                    ), csv2),
+                    () -> assertEquals(csv, csv3)
+            );
+        }
+
+    }
+
+    @Nested
     final class Equals {
 
         @Test
