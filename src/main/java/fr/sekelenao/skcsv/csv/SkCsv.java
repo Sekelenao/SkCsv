@@ -244,10 +244,4 @@ public class SkCsv implements Iterable<SkCsvRow> {
         return builder.toString();
     }
 
-    public static void main(String[] args) {
-        var row = new SkCsvRow("x", "y", "z", "x", "z", "y");
-        var row2 = row.stream().filter(s -> !s.equals("z")).collect(SkCsvRow.collector());
-        System.out.println(row2);
-    }
-
 }
