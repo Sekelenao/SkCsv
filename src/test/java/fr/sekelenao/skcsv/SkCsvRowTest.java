@@ -478,12 +478,15 @@ final class SkCsvRowTest {
         @DisplayName("Remove first and last assertions")
         void removeFirstAndLastAssertions() {
             var row = helloWorldRow();
+            var emptyRow = new SkCsvRow();
             row.removeFirst();
             row.removeLast();
             row.removeFirst();
             assertAll("Remove first and last assertions",
                     () -> assertThrows(NoSuchElementException.class, row::removeFirst),
-                    () -> assertThrows(NoSuchElementException.class, row::removeLast)
+                    () -> assertThrows(NoSuchElementException.class, row::removeLast),
+                    () -> assertThrows(NoSuchElementException.class, emptyRow::removeFirst),
+                    () -> assertThrows(NoSuchElementException.class, emptyRow::removeLast)
             );
         }
 
