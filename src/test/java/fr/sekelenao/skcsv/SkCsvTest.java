@@ -488,6 +488,43 @@ final class SkCsvTest {
         }
 
         @Test
+        @DisplayName("Remove first and last")
+        void removeFirstAndLast() {
+            int count = 0;
+            var csv = csvTemplate(3);
+            while (!csv.isEmpty()) {
+                assertEquals(csv.getFirst(), csv.removeFirst());
+                count++;
+                assertEquals(3 - count, csv.size());
+            }
+            assertEquals(3, count);
+            count = 0;
+            var csv2 = csvTemplate(3);
+            while (!csv2.isEmpty()) {
+                assertEquals(csv2.getLast(), csv2.removeLast());
+                count++;
+                assertEquals(3 - count, csv2.size());
+            }
+            assertEquals(3, count);
+        }
+
+        @Test
+        @DisplayName("Remove first and last assertions")
+        void removeFirstAndLastAssertions() {
+            var csv = csvTemplate(3);
+            var emptyCsv = new SkCsv();
+            csv.removeFirst();
+            csv.removeLast();
+            csv.removeFirst();
+            assertAll("Remove first and last assertions",
+                    () -> assertThrows(NoSuchElementException.class, csv::removeFirst),
+                    () -> assertThrows(NoSuchElementException.class, csv::removeLast),
+                    () -> assertThrows(NoSuchElementException.class, emptyCsv::removeFirst),
+                    () -> assertThrows(NoSuchElementException.class, emptyCsv::removeLast)
+            );
+        }
+
+        @Test
         @DisplayName("RemoveIf basic tests")
         void removeIf() {
             var csv = csvTemplate(8);

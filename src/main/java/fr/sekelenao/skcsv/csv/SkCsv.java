@@ -130,6 +130,16 @@ public class SkCsv implements Iterable<SkCsvRow> {
         return skCsvRows.remove(index);
     }
 
+    public SkCsvRow removeFirst(){
+        if(skCsvRows.isEmpty()) throw new NoSuchElementException();
+        return skCsvRows.remove(0);
+    }
+
+    public SkCsvRow removeLast(){
+        if(skCsvRows.isEmpty()) throw new NoSuchElementException();
+        return skCsvRows.remove(skCsvRows.size() - 1);
+    }
+
     public boolean removeIf(Predicate<? super SkCsvRow> filter) {
         return skCsvRows.removeIf(Objects.requireNonNull(filter));
     }
