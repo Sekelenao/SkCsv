@@ -1,4 +1,9 @@
-# SkCsv library for Java 17+
+# SkCsv library for Java 17+ (PREVIEW)
+
+## Warning
+
+Please note that the development of this library is still ongoing, and there are no assurances regarding potential
+changes to its structure or functionality in the future.
 
 ## Description
 
@@ -98,7 +103,9 @@ public final class Main {
 #### Format export
 
 Finally, we would like to keep only the plant names in the produced CSV. To do this, we will use the map function of the
-stream API and recreate the lines by keeping only the indexes that interest us.
+stream API and recreate the lines by keeping only the indexes that interest us. Furthermore, to add a twist, we notice
+that some plant names contain commas. However, we still want to export the CSV with commas as separators. Well, SkCsv
+will handle that for us.
 
 ```java
 public final class Main {
@@ -125,4 +132,60 @@ public final class Main {
     }
 
 }
+```
+
+### Export records without modifying the previous code
+
+Imagine we have a massive and critical banking application. We would like to export our data to a CSV, but because we're
+wary of tampering with these precious records, we don't want to add any code inside or export sensitive data.
+
+Therefore, we will add an annotation to designate the data that we want to export.
+
+```java
+public record BankAccount(@CsvColumn String bankName, @CsvColumn UUID uuid, @CsvColumn BigDecimal balance, int secretCode){}
+```
+
+Let's imagine that within the application, we have a way to obtain these records either as an Iterable or as an Iterator,
+as shown below.
+
+```java
+private static final Iterator<BankAccount> BANK_ACCOUNT_ITERATOR = new Iterator<>() {
+
+    private int index;
+
+    private static final Random RANDOM = new Random();
+
+    @Override
+    public boolean hasNext() {
+        return index < 1_000_000;
+    }
+
+    @Override
+    public BankAccount next() {
+        if (!hasNext()) throw new NoSuchElementException();
+        index++;
+        return new BankAccount("OnlyBank", UUID.randomUUID(), BigDecimal.valueOf(Math.random() * 100), RANDOM.nextInt());
+    }
+
+};
+```
+
+In terms of lines of code, we'll only need a single line!
+
+```java
+public final class Main {
+    
+    public static void main(String[] args) throws IOException {
+        SkCsvRecords.export(Paths.get("out.csv"), BANK_ACCOUNT_ITERATOR, SkCsvConfig.SEMICOLON);
+    }
+
+}
+```
+
+To obtain a huge CSV file of 1_000_000 records in ~2 seconds :
+
+```
+OnlyBank;a78e71e4-4c6f-4fde-990e-21274c2bd809;57.44878667185084
+OnlyBank;2ebf4749-77e3-4158-85c6-5423c5f0b791;80.68069692551795
+OnlyBank;89bd2b50-1aa5-4bb0-bf19-15defb47a0ed;51.924661497651535
 ```
