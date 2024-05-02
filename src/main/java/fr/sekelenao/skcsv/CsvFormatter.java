@@ -14,27 +14,27 @@ final class CsvFormatter {
 
         private StringBuilder cell;
 
-        public CsvBuffer() {
+        private CsvBuffer() {
             this.csv = new SkCsv();
             this.row = new SkCsvRow();
             this.cell = new StringBuilder();
         }
 
-        public void appendToCell(char c) {
+        private void appendToCell(char c) {
             cell.append(c);
         }
 
-        public void pushCell() {
+        private void pushCell() {
             row.add(cell.toString());
             cell = new StringBuilder();
         }
 
-        public void pushRow(){
+        private void pushRow(){
             csv.add(row);
             row = new SkCsvRow();
         }
 
-        public boolean notEmpty() {
+        private boolean notEmpty() {
             return !cell.isEmpty();
         }
 
@@ -46,7 +46,7 @@ final class CsvFormatter {
     private final char delimiter;
     private QuoteState quoteState = QuoteState.OUT;
 
-    public CsvFormatter(SkCsvConfig configuration) {
+    CsvFormatter(SkCsvConfig configuration) {
         Objects.requireNonNull(configuration);
         this.quote = configuration.quote();
         this.delimiter = configuration.delimiter();
@@ -90,7 +90,7 @@ final class CsvFormatter {
         }
     }
 
-    public SkCsv split(Iterable<String> lines){
+    SkCsv split(Iterable<String> lines){
         Objects.requireNonNull(lines);
         quoteState = QuoteState.OUT;
         var buffer = new CsvBuffer();
