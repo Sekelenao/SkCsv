@@ -170,7 +170,9 @@ private static final Iterator<BankAccount> BANK_ACCOUNT_ITERATOR = new Iterator<
 };
 ```
 
-In terms of lines of code, we'll only need a single line!
+In terms of lines of code, we'll only need a single line ! The parser will take care of everything as usual;
+it uses the String.valueOf method for annotated types. Unlike the rest of the library, the absence of null values is
+not guaranteed!
 
 ```java
 public final class Main {
