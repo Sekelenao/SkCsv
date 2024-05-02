@@ -1,7 +1,7 @@
 package fr.sekelenao.skcsv;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
@@ -181,11 +181,22 @@ public class SkCsv implements Iterable<SkCsvRow> {
         );
     }
 
+    public static SkCsv from(Path path, SkCsvConfig config, Charset charset) throws IOException {
+        SkAssertions.requireNonNulls(path, config, charset);
+        var formatter = new CsvFormatter(config);
+        return formatter.split(Files.readAllLines(path, charset));
+    }
+
     public static SkCsv from(Path path, SkCsvConfig config) throws IOException {
         Objects.requireNonNull(path);
         Objects.requireNonNull(config);
-        var formatter = new CsvFormatter(config);
-        return formatter.split(Files.readAllLines(path));
+        return from(path, config, Charset.defaultCharset());
+    }
+
+    public static SkCsv from(Path path, Charset charset) throws IOException {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(charset);
+        return from(path, SkCsvConfig.SEMICOLON, charset);
     }
 
     public static SkCsv from(Path path) throws IOException {
@@ -205,16 +216,21 @@ public class SkCsv implements Iterable<SkCsvRow> {
         return from(text, SkCsvConfig.SEMICOLON);
     }
 
-    public void export(Path path, OpenOption... openOptions) throws IOException {
-        Objects.requireNonNull(path);
-        Objects.requireNonNull(openOptions);
+    public void export(Path path, Charset charset, OpenOption... openOptions) throws IOException {
+        SkAssertions.requireNonNulls(path, charset, openOptions);
         var formatter = new CsvFormatter(config);
-        try (var writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, openOptions)) {
+        try (var writer = Files.newBufferedWriter(path, charset, openOptions)) {
             for (var row : skCsvRows) {
                 writer.write(formatter.toCsvString(row));
                 writer.newLine();
             }
         }
+    }
+
+    public void export(Path path, OpenOption... openOptions) throws IOException {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(openOptions);
+        export(path, Charset.defaultCharset(), openOptions);
     }
 
     @Override

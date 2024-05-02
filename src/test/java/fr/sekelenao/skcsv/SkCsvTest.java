@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -758,6 +759,15 @@ final class SkCsvTest {
             );
         }
 
+        @Test
+        @DisplayName("Parallel collector")
+        void ParallelCollector(){
+            var result = IntStream.range(0, 1000).parallel()
+                    .mapToObj(i -> new SkCsvRow(String.valueOf(i)))
+                    .collect(SkCsv.collector());
+            assertTrue(IntStream.range(0, 1000).allMatch(i -> result.get(i).equals(new SkCsvRow(String.valueOf(i)))));
+        }
+
     }
 
     @Nested
@@ -969,7 +979,7 @@ final class SkCsvTest {
             var pathUselessQuotes = Paths.get("src", "test", "resources", "template_useless_quotes.csv");
             var csvSemicolon = SkCsv.from(pathSemicolon, SkCsvConfig.SEMICOLON);
             var csvComma = SkCsv.from(pathComma, SkCsvConfig.COMMA);
-            var csvUselessQuotes = SkCsv.from(pathUselessQuotes);
+            var csvUselessQuotes = SkCsv.from(pathUselessQuotes, StandardCharsets.UTF_8);
             assertAll("From a file",
                     () -> assertEquals(6, csvSemicolon.size()),
                     () -> assertEquals(6, csvComma.size()),

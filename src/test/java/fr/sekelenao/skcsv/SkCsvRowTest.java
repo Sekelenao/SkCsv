@@ -722,6 +722,15 @@ final class SkCsvRowTest {
             );
         }
 
+        @Test
+        @DisplayName("Parallel collector")
+        void ParallelCollector(){
+            var result = IntStream.range(0, 1000).parallel()
+                    .mapToObj(String::valueOf)
+                    .collect(SkCsvRow.collector());
+            assertTrue(IntStream.range(0, 1000).allMatch(i -> result.get(i).equals(String.valueOf(i))));
+        }
+
     }
 
     @Nested
