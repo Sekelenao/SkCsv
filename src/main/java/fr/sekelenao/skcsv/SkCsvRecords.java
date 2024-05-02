@@ -70,9 +70,7 @@ public final class SkCsvRecords {
         }
     }
 
-    public static <R extends Record> void export(
-            Path path, Iterable<R> records, SkCsvConfig config, OpenOption... openOptions
-    ) throws IOException {
+    public static void export(Path path, Iterable<? extends Record> records, SkCsvConfig config, OpenOption... openOptions) throws IOException {
         SkAssertions.requireNonNulls(path, records, config, openOptions);
         export(path, records.iterator(), config, openOptions);
     }
