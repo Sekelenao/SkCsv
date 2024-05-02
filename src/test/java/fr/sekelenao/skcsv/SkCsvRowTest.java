@@ -4,14 +4,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,14 +20,6 @@ final class SkCsvRowTest {
 
     @Nested
     final class Constructors {
-
-        static Stream<Arguments> wrongArraysProvider() {
-            return Stream.of(
-                    Arguments.of((Object) null),
-                    Arguments.of((Object) new String[]{null}),
-                    Arguments.of((Object) new String[]{"wrong", null})
-            );
-        }
 
         @Test
         @DisplayName("Empty after default constructor")
@@ -68,11 +57,14 @@ final class SkCsvRowTest {
             );
         }
 
-        @ParameterizedTest
-        @MethodSource("wrongArraysProvider")
+        @Test
         @DisplayName("VarArgs constructor null assertions")
-        void byVarArgsAssertions(String[] wrongArray) {
-            assertThrows(NullPointerException.class, () -> new SkCsvRow(wrongArray));
+        void byVarArgsAssertions() {
+            assertAll("VarArgs constructor null assertions",
+                    () -> assertThrows(NullPointerException.class, () -> new SkCsvRow((String) null)),
+                    () -> assertThrows(NullPointerException.class, () -> new SkCsvRow(new String[]{null})),
+                    () -> assertThrows(NullPointerException.class, () -> new SkCsvRow(new String[]{"wrong", null}))
+            );
         }
 
         @Test
@@ -724,7 +716,7 @@ final class SkCsvRowTest {
 
         @Test
         @DisplayName("Parallel collector")
-        void ParallelCollector(){
+        void ParallelCollector() {
             var result = IntStream.range(0, 1000).parallel()
                     .mapToObj(String::valueOf)
                     .collect(SkCsvRow.collector());
