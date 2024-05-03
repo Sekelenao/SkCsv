@@ -173,7 +173,7 @@ public class SkCsvRow implements Iterable<String> {
         }
     }
 
-    public static Collector<String, SkCsvRow, SkCsvRow> collector(){
+    public static Collector<String, ?, SkCsvRow> collector(){
         return Collector.of(
                 SkCsvRow::new, SkCsvRow::addAll,
                 (csv1, csv2) -> {csv1.addAll(csv2); return csv1;},
