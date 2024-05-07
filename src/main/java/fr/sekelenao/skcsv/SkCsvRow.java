@@ -3,7 +3,6 @@ package fr.sekelenao.skcsv;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -67,37 +66,6 @@ public class SkCsvRow implements Iterable<String> {
         }
     }
 
-    public void insert(int position, String value) {
-        Objects.requireNonNull(value);
-        SkAssertions.validPosition(position, cells.size());
-        cells.add(position, value);
-    }
-
-    public void insertAll(int position, String... values) {
-        SkAssertions.validPosition(position, cells.size());
-        Objects.requireNonNull(values);
-        if (position == cells.size()) {
-            addAll(values);
-        } else {
-            cells.addAll(position, Arrays.asList(values));
-        }
-    }
-
-    public void insertAll(int position, Iterable<String> values) {
-        SkAssertions.validPosition(position, cells.size());
-        Objects.requireNonNull(values);
-        if (position == cells.size()) {
-            addAll(values);
-        } else {
-            var lst = new ArrayList<String>();
-            for (var value : values) {
-                Objects.requireNonNull(value);
-                lst.add(value);
-            }
-            cells.addAll(position, lst);
-        }
-    }
-
     public String set(int index, String value) {
         Objects.checkIndex(index, cells.size());
         Objects.requireNonNull(value);
@@ -124,26 +92,6 @@ public class SkCsvRow implements Iterable<String> {
         return cells.get(cells.size() - 1);
     }
 
-    public String remove(int index) {
-        Objects.checkIndex(index, cells.size());
-        return cells.remove(index);
-    }
-
-    public String removeFirst(){
-        if (cells.isEmpty()) throw new NoSuchElementException();
-        return cells.remove(0);
-    }
-
-    public String removeLast() {
-        if (cells.isEmpty()) throw new NoSuchElementException();
-        return cells.remove(cells.size() - 1);
-    }
-
-    public boolean removeIf(Predicate<? super String> filter) {
-        Objects.requireNonNull(filter);
-        return cells.removeIf(filter);
-    }
-
     public boolean contains(Object value) {
         return value != null && cells.stream().anyMatch(value::equals);
     }
@@ -159,10 +107,6 @@ public class SkCsvRow implements Iterable<String> {
         return cells.iterator();
     }
 
-    public Stream<String> stream() {
-        return cells.stream();
-    }
-
     public void map(Function<? super String, String> mapper) {
         Objects.requireNonNull(mapper);
         var it = cells.listIterator();
@@ -173,16 +117,16 @@ public class SkCsvRow implements Iterable<String> {
         }
     }
 
+    public Stream<String> stream() {
+        return cells.stream();
+    }
+
     public static Collector<String, ?, SkCsvRow> collector(){
         return Collector.of(
                 SkCsvRow::new, SkCsvRow::addAll,
-                (csv1, csv2) -> {csv1.addAll(csv2); return csv1;},
+                (csv1, csv2) -> { csv1.addAll(csv2); return csv1; },
                 Collector.Characteristics.IDENTITY_FINISH
         );
-    }
-
-    public SkCsvRow copy() {
-        return new SkCsvRow(this.cells);
     }
 
     @Override

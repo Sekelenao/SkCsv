@@ -7,7 +7,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -148,132 +147,6 @@ final class SkCsvRowTest {
         }
 
         @Test
-        @DisplayName("Insert")
-        void insert() {
-            var row = new SkCsvRow();
-            row.insert(0, "Hello");
-            row.insert(0, "world");
-            row.insert(1, "!");
-            assertAll("Insert",
-                    () -> assertEquals(3, row.size()),
-                    () -> assertEquals("world;!;Hello", row.toString()),
-                    () -> assertEquals("world", row.get(0)),
-                    () -> assertEquals("!", row.get(1)),
-                    () -> assertEquals("Hello", row.get(2))
-            );
-        }
-
-        @Test
-        @DisplayName("Insert null assertions")
-        void insertNullAssertions() {
-            var emptyRow = new SkCsvRow();
-            assertThrows(NullPointerException.class, () -> emptyRow.insert(0, null));
-        }
-
-        @Test
-        @DisplayName("Insert indices assertions")
-        void insertIndicesAssertions() {
-            var row = new SkCsvRow();
-            assertAll("Insert indices assertions",
-                    () -> assertThrows(IndexOutOfBoundsException.class, () -> row.insert(-1, "out")),
-                    () -> assertThrows(IndexOutOfBoundsException.class, () -> row.insert(1, "out"))
-            );
-            row.insertAll(row.size(), List.of("Hello", "world", "!"));
-            assertAll("Insert indices assertions 2",
-                    () -> assertThrows(IndexOutOfBoundsException.class, () -> row.insert(-1, "out")),
-                    () -> assertThrows(IndexOutOfBoundsException.class, () -> row.insert(4, "out"))
-            );
-        }
-
-        @Test
-        @DisplayName("Insert all at end")
-        void insertAllAtEnd() {
-            var row = helloWorldRow();
-            row.insertAll(row.size(), List.of("(", "and Meta-verse", ")"));
-            var row2 = row.copy();
-            row2.insertAll(row2.size(), Collections.emptyList());
-            var row3 = row.copy();
-            row3.insertAll(row3.size(), "(", "and Meta-verse", ")");
-            assertAll("Insert all at end",
-                    () -> assertEquals(6, row.size()),
-                    () -> assertEquals("Hello;world;!;(;and Meta-verse;)", row.toString()),
-                    () -> assertEquals("Hello;world;!;(;and Meta-verse;)", row2.toString()),
-                    () -> assertEquals("Hello;world;!;(;and Meta-verse;);(;and Meta-verse;)", row3.toString())
-            );
-        }
-
-        @Test
-        @DisplayName("Insert all at start")
-        void insertAllAtStart() {
-            var row = helloWorldRow();
-            row.insertAll(0, List.of("(", "and Meta-verse", ")"));
-            var row2 = helloWorldRow();
-            row2.insertAll(0, "(", "and Meta-verse", ")");
-            assertAll("Insert all at start",
-                    () -> assertEquals(6, row.size()),
-                    () -> assertEquals("(;and Meta-verse;);Hello;world;!", row.toString()),
-                    () -> assertEquals(6, row2.size()),
-                    () -> assertEquals("(;and Meta-verse;);Hello;world;!", row2.toString())
-            );
-        }
-
-        @Test
-        @DisplayName("Insert all")
-        void insertAll() {
-            var row = helloWorldRow();
-            row.insertAll(2, List.of("(", "and Meta-verse", ")"));
-            var row2 = helloWorldRow();
-            row2.insertAll(2, "(", "and Meta-verse", ")");
-            assertAll("Insert all",
-                    () -> assertEquals(6, row.size()),
-                    () -> assertEquals("Hello;world;(;and Meta-verse;);!", row.toString()),
-                    () -> assertEquals(6, row2.size()),
-                    () -> assertEquals("Hello;world;(;and Meta-verse;);!", row2.toString())
-            );
-        }
-
-        @Test
-        @DisplayName("Insert all null assertions")
-        void insertAllNullAssertions() {
-            var emptyRow = new SkCsvRow();
-            var lst = Collections.singleton((String) null);
-            assertAll("Insert all null",
-                    () -> assertThrows(NullPointerException.class, () -> emptyRow.insertAll(0, (Iterable<String>) null)),
-                    () -> assertThrows(NullPointerException.class, () -> emptyRow.insertAll(0, (String[]) null)),
-                    () -> assertThrows(NullPointerException.class, () -> emptyRow.insertAll(0, lst))
-            );
-        }
-
-        @ParameterizedTest
-        @ValueSource(ints = {-10, -1, 4, 5, 100})
-        @DisplayName("Insert all position assertions")
-        void insertAllPositionAssertions(int index) {
-            var row = helloWorldRow();
-            var lst = new ArrayList<String>();
-            assertAll("Insert all position assertions",
-                    () -> assertThrows(IndexOutOfBoundsException.class, () -> row.insertAll(index, lst)),
-                    () -> assertThrows(IndexOutOfBoundsException.class, () -> row.insertAll(index, ""))
-            );
-        }
-
-        @Test
-        @DisplayName("Add all")
-        void addAll() {
-            var row = helloWorldRow();
-            row.addAll(List.of("(", "and Meta-verse", ")"));
-            var row2 = row.copy();
-            row2.addAll(Collections.emptyList());
-            var row3 = row.copy();
-            row3.addAll("(", "and Meta-verse", ")");
-            assertAll("addAll",
-                    () -> assertEquals(6, row.size()),
-                    () -> assertEquals("Hello;world;!;(;and Meta-verse;)", row.toString()),
-                    () -> assertEquals("Hello;world;!;(;and Meta-verse;)", row2.toString()),
-                    () -> assertEquals("Hello;world;!;(;and Meta-verse;);(;and Meta-verse;)", row3.toString())
-            );
-        }
-
-        @Test
         @DisplayName("Add all null assertions")
         void addAllNullAssertions() {
             var emptyRow = new SkCsvRow();
@@ -395,113 +268,6 @@ final class SkCsvRowTest {
                     () -> assertThrows(NoSuchElementException.class, emptyRow::getFirst),
                     () -> assertThrows(NoSuchElementException.class, emptyRow::getLast)
             );
-        }
-
-    }
-
-    @Nested
-    final class Remove {
-
-        @ParameterizedTest
-        @ValueSource(ints = {0, 1, 2})
-        @DisplayName("Remove basic tests")
-        void remove(int index) {
-            var row = new SkCsvRow("0", "1", "2");
-            assertAll("Remove basic tests",
-                    () -> assertEquals(String.valueOf(index), row.remove(index)),
-                    () -> assertEquals(IntStream.range(0, row.size() + 1)
-                                    .filter(i -> i != index)
-                                    .mapToObj(String::valueOf)
-                                    .collect(Collectors.joining(";"))
-                            , row.toString())
-            );
-        }
-
-        @Test
-        @DisplayName("Remove all values")
-        void removeAll() {
-            var row = helloWorldRow();
-            var initialSize = row.size();
-            for (int i = 0; i < initialSize; i++) row.remove(0);
-            assertAll("Remove all",
-                    () -> assertTrue(row.isEmpty()),
-                    () -> assertEquals(0, row.size()),
-                    () -> assertEquals("", row.toString())
-            );
-        }
-
-        @Test
-        @DisplayName("Remove assertions")
-        void removeAssertions() {
-            var row = helloWorldRow();
-            row.remove(0);
-            assertAll("Remove assertions",
-                    () -> assertThrows(IndexOutOfBoundsException.class, () -> row.remove(-1)),
-                    () -> assertThrows(IndexOutOfBoundsException.class, () -> row.remove(3)),
-                    () -> assertThrows(IndexOutOfBoundsException.class, () -> row.remove(2))
-            );
-        }
-
-        @Test
-        @DisplayName("Remove first and last")
-        void removeFirstAndLast() {
-            int count = 0;
-            var row1 = helloWorldRow();
-            while (!row1.isEmpty()) {
-                assertEquals(row1.getFirst(), row1.removeFirst());
-                count++;
-                assertEquals(3 - count, row1.size());
-            }
-            assertEquals(3, count);
-            count = 0;
-            var row2 = helloWorldRow();
-            while (!row2.isEmpty()) {
-                assertEquals(row2.getLast(), row2.removeLast());
-                count++;
-                assertEquals(3 - count, row2.size());
-            }
-            assertEquals(3, count);
-        }
-
-        @Test
-        @DisplayName("Remove first and last assertions")
-        void removeFirstAndLastAssertions() {
-            var row = helloWorldRow();
-            var emptyRow = new SkCsvRow();
-            row.removeFirst();
-            row.removeLast();
-            row.removeFirst();
-            assertAll("Remove first and last assertions",
-                    () -> assertThrows(NoSuchElementException.class, row::removeFirst),
-                    () -> assertThrows(NoSuchElementException.class, row::removeLast),
-                    () -> assertThrows(NoSuchElementException.class, emptyRow::removeFirst),
-                    () -> assertThrows(NoSuchElementException.class, emptyRow::removeLast)
-            );
-        }
-
-        @Test
-        @DisplayName("RemoveIf basic tests")
-        void removeIf() {
-            var row = SkCsv.from(Collections.singleton("1;2;3;4;5;6;7;8;9;10")).getFirst();
-            int expectedSize = row.size() / 2;
-            assertAll("RemoveIf basic tests",
-                    () -> assertTrue(row.removeIf(s -> (Integer.parseInt(s) & 1) == 0)),
-                    () -> assertTrue(row.stream().allMatch(s -> (Integer.parseInt(s) & 1) == 1)),
-                    () -> assertEquals(expectedSize, row.size()),
-                    () -> assertFalse(() -> row.removeIf((Object value) -> false)),
-                    () -> assertEquals(expectedSize, row.size()),
-                    () -> {
-                        row.removeIf(value -> true);
-                        assertEquals(0, row.size());
-                    }
-            );
-        }
-
-        @Test
-        @DisplayName("RemoveIf null assertions")
-        void removeIfNullAssertions() {
-            var emptyRow = new SkCsvRow();
-            assertThrows(NullPointerException.class, () -> emptyRow.removeIf(null));
         }
 
     }
@@ -640,7 +406,7 @@ final class SkCsvRowTest {
         void iteratorConcurrentModifications() {
             var row = helloWorldRow();
             var it = row.iterator();
-            row.remove(0);
+            row.add("");
             assertThrows(ConcurrentModificationException.class, it::next);
         }
 
@@ -657,9 +423,9 @@ final class SkCsvRowTest {
             var emptyRow = new SkCsvRow();
             var row = helloWorldRow();
             row.stream().filter(s -> s.length() > 1).forEach(lst::add);
-            row.remove(row.size() - 1);
+
             assertAll("Stream basics",
-                    () -> assertEquals(String.join("", row), String.join("", lst)),
+                    () -> assertEquals("Hello world", String.join(" ", lst)),
                     () -> assertEquals(2, lst.size()),
                     () -> assertDoesNotThrow(emptyRow::stream)
             );
@@ -721,27 +487,6 @@ final class SkCsvRowTest {
                     .mapToObj(String::valueOf)
                     .collect(SkCsvRow.collector());
             assertTrue(IntStream.range(0, 1000).allMatch(i -> result.get(i).equals(String.valueOf(i))));
-        }
-
-    }
-
-    @Nested
-    final class Copy {
-
-        @Test
-        @DisplayName("Copy basic tests")
-        void copy() {
-            var row = helloWorldRow();
-            var copy = row.copy();
-            assertAll("Copy basic tests",
-                    () -> assertEquals(row, copy),
-                    () -> {
-                        row.remove(row.size() - 1);
-                        assertNotEquals(row, copy);
-                    },
-                    () -> assertEquals(2, row.size()),
-                    () -> assertEquals(3, copy.size())
-            );
         }
 
     }
