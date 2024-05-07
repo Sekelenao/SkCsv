@@ -67,8 +67,8 @@ final class SkCsvRowTest {
         }
 
         @Test
-        @DisplayName("Iterable constructor")
-        void byIterable() {
+        @DisplayName("Collection constructor")
+        void byCollection() {
             var helloWorldList = new ArrayList<>(List.of("", "Hello", "world", "!"));
             var row = new SkCsvRow(helloWorldList);
             assertAll("Simple operations",
@@ -84,14 +84,46 @@ final class SkCsvRowTest {
         }
 
         @Test
-        @DisplayName("Iterable constructor null assertions")
-        void byIterableAssertions() {
+        @DisplayName("Collection constructor null assertions")
+        void byCollectionAssertions() {
             var wrongList = new ArrayList<String>();
             wrongList.add("wrong");
             wrongList.add(null);
             assertAll("NullPointer assertions",
                     () -> assertThrows(NullPointerException.class, () -> new SkCsvRow((List<String>) null)),
                     () -> assertThrows(NullPointerException.class, () -> new SkCsvRow(wrongList))
+            );
+        }
+
+        @Test
+        @DisplayName("Collection constructor")
+        void byIterable() {
+            var otherRow = new SkCsvRow(List.of("", "Hello", "world", "!"));
+            var row = new SkCsvRow(otherRow);
+            assertAll("Simple operations",
+                    () -> assertEquals(4, row.size()),
+                    () -> assertEquals(";Hello;world;!", row.toString()),
+                    () -> assertEquals(0, new SkCsvRow(new SkCsvRow()).size()),
+                    () -> assertEquals(1, new SkCsvRow(new SkCsvRow("")).size()),
+                    () -> assertEquals("", new SkCsvRow(new SkCsvRow("")).toString()),
+                    () -> assertEquals(";", new SkCsvRow(new SkCsvRow("", "")).toString())
+            );
+            otherRow.add("test");
+            assertEquals(";Hello;world;!", row.toString());
+        }
+
+        @Test
+        @DisplayName("Collection constructor null assertions")
+        void byIterableAssertions() {
+            var nullIterable = new Iterable<String>() {
+                @Override
+                public Iterator<String> iterator() {
+                    return Arrays.asList(new String[]{"", null}).iterator();
+                }
+            };
+            assertAll("NullPointer assertions",
+                    () -> assertThrows(NullPointerException.class, () -> new SkCsvRow((Iterable<String>) null)),
+                    () -> assertThrows(NullPointerException.class, () -> new SkCsvRow(nullIterable))
             );
         }
 

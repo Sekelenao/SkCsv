@@ -8,29 +8,43 @@ import java.util.stream.Stream;
 
 public class SkCsvRow implements Iterable<String> {
 
-    private final List<String> cells = new ArrayList<>();
+    private final List<String> cells;
 
-    public SkCsvRow() {}
+    public SkCsvRow() {
+        this.cells = new ArrayList<>();
+    }
 
     public SkCsvRow(int amount) {
         SkAssertions.positive(amount);
+        this.cells = new ArrayList<>(amount);
         fill(amount);
     }
 
     public SkCsvRow(String... array) {
         Objects.requireNonNull(array);
+        this.cells = new ArrayList<>(array.length);
         for (var value : array) {
             Objects.requireNonNull(value);
             cells.add(value);
         }
     }
 
-    public SkCsvRow(Iterable<String> iterable) {
+    public SkCsvRow(Iterable<String> iterable, int estimatedSize) {
         Objects.requireNonNull(iterable);
+        SkAssertions.positive(estimatedSize);
+        this.cells = new ArrayList<>(estimatedSize);
         for (var value : iterable) {
             Objects.requireNonNull(value);
             cells.add(value);
         }
+    }
+
+    public SkCsvRow(Collection<String> cells) {
+        this(cells, cells.size());
+    }
+
+    public SkCsvRow(Iterable<String> iterable) {
+        this(iterable, 0);
     }
 
     public int size() {
@@ -50,7 +64,7 @@ public class SkCsvRow implements Iterable<String> {
         cells.add(value);
     }
 
-    public void addAll(Iterable<String> values){
+    public void addAll(String... values){
         Objects.requireNonNull(values);
         for (var value : values) {
             Objects.requireNonNull(value);
@@ -58,7 +72,7 @@ public class SkCsvRow implements Iterable<String> {
         }
     }
 
-    public void addAll(String... values){
+    public void addAll(Iterable<String> values){
         Objects.requireNonNull(values);
         for (var value : values) {
             Objects.requireNonNull(value);
