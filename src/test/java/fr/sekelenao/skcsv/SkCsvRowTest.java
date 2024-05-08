@@ -96,7 +96,7 @@ final class SkCsvRowTest {
         }
 
         @Test
-        @DisplayName("Collection constructor")
+        @DisplayName("Iterable constructor")
         void byIterable() {
             var otherRow = new SkCsvRow(List.of("", "Hello", "world", "!"));
             var row = new SkCsvRow(otherRow);
@@ -106,14 +106,17 @@ final class SkCsvRowTest {
                     () -> assertEquals(0, new SkCsvRow(new SkCsvRow()).size()),
                     () -> assertEquals(1, new SkCsvRow(new SkCsvRow("")).size()),
                     () -> assertEquals("", new SkCsvRow(new SkCsvRow("")).toString()),
-                    () -> assertEquals(";", new SkCsvRow(new SkCsvRow("", "")).toString())
+                    () -> assertEquals(";", new SkCsvRow(new SkCsvRow("", "")).toString()),
+                    () -> assertEquals(";", new SkCsvRow(new SkCsvRow("", ""), 2).toString()),
+                    () -> assertEquals(";", new SkCsvRow(new SkCsvRow("", ""), 1).toString()),
+                    () -> assertEquals(";", new SkCsvRow(new SkCsvRow("", ""), 100).toString())
             );
             otherRow.add("test");
             assertEquals(";Hello;world;!", row.toString());
         }
 
         @Test
-        @DisplayName("Collection constructor null assertions")
+        @DisplayName("Iterable constructor assertions")
         void byIterableAssertions() {
             var nullIterable = new Iterable<String>() {
                 @Override
@@ -123,7 +126,10 @@ final class SkCsvRowTest {
             };
             assertAll("NullPointer assertions",
                     () -> assertThrows(NullPointerException.class, () -> new SkCsvRow((Iterable<String>) null)),
-                    () -> assertThrows(NullPointerException.class, () -> new SkCsvRow(nullIterable))
+                    () -> assertThrows(NullPointerException.class, () -> new SkCsvRow(nullIterable)),
+                    () -> assertThrows(NullPointerException.class, () -> new SkCsvRow(nullIterable, 0)),
+                    () -> assertThrows(NullPointerException.class, () -> new SkCsvRow(null, 0)),
+                    () -> assertThrows(IllegalArgumentException.class, () -> new SkCsvRow(nullIterable, -1))
             );
         }
 
