@@ -144,7 +144,6 @@ final class SkCsvRecordTest {
         @Order(1)
         void exportALot() {
             assertDoesNotThrow(() -> SkCsvRecords.export(PRODUCED_PATH, bankAccountIterator, SkCsvConfig.SEMICOLON, StandardOpenOption.CREATE));
-
         }
 
         @Test

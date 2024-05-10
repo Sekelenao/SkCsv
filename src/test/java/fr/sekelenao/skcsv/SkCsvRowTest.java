@@ -410,18 +410,7 @@ final class SkCsvRowTest {
             var row = helloWorldRow();
             var it = row.iterator();
             assertAll("Iterator remove",
-                    () -> assertThrows(IllegalStateException.class, it::remove),
-                    () -> {
-                        for (int i = 0; it.hasNext(); i++) {
-                            if (i == 1) {
-                                it.remove();
-                                assertThrows(IllegalStateException.class, it::remove);
-                            }
-                            it.next();
-                        }
-                    },
-                    () -> assertEquals(2, row.size()),
-                    () -> assertEquals("world;!", row.toString())
+                    () -> assertThrows(UnsupportedOperationException.class, it::remove)
             );
         }
 
