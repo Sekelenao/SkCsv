@@ -11,7 +11,7 @@ public class SkCsvRow implements Iterable<String> {
 
     private static final int DEFAULT_CAPACITY = 10;
 
-    private static final int GROWING_VALUE = 20;
+    private static final int GROWING_AMOUNT = 20;
 
     private int version = 0;
 
@@ -48,7 +48,7 @@ public class SkCsvRow implements Iterable<String> {
 
     private void growIfNecessary(int amount) {
         if(size + amount > cells.length){
-            var newLength = size + Math.max(GROWING_VALUE, amount);
+            var newLength = size + Math.max(GROWING_AMOUNT, amount);
             if(newLength <= 0){
                 throw new OutOfMemoryError("Required row size is too large");
             }
@@ -60,12 +60,10 @@ public class SkCsvRow implements Iterable<String> {
         Objects.requireNonNull(iterable);
         SkAssertions.positive(estimatedSize);
         this.cells = new String[estimatedSize];
-        var iterator = iterable.iterator();
-        for(int i = 0; iterator.hasNext(); i++) {
-            var next = Objects.requireNonNull(iterator.next());
+        for (var value : iterable){
+            Objects.requireNonNull(value);
             growIfNecessary(1);
-            this.cells[i] = next;
-            size++;
+            this.cells[size++] = value;
         }
     }
 
@@ -79,10 +77,6 @@ public class SkCsvRow implements Iterable<String> {
 
     public boolean isEmpty() {
         return size == 0;
-    }
-
-    public boolean isBlank(){
-        return Arrays.stream(cells, 0, size).allMatch(String::isBlank);
     }
 
     public void add(String value) {

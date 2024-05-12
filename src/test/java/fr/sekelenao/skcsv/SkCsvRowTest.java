@@ -136,7 +136,7 @@ final class SkCsvRowTest {
     }
 
     @Nested
-    @DisplayName("Empty and blank tests")
+    @DisplayName("Empty tests")
     final class IsEmptyOrBlank {
 
         @Test
@@ -145,10 +145,8 @@ final class SkCsvRowTest {
             var row = new SkCsvRow();
             assertAll("Empty tests",
                     () -> assertTrue(row.isEmpty()),
-                    () -> assertTrue(row.isBlank()),
                     () -> {
                         row.addAll("     ", "\n", "\t");
-                        assertTrue(row.isBlank());
                         assertFalse(row.isEmpty());
                     }
             );
