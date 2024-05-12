@@ -93,7 +93,6 @@ public class SkCsvRow implements Iterable<String> {
         for (var value : array) {
             cells[size++] = Objects.requireNonNull(value);
         }
-        version++;
     }
 
     public void addAll(Collection<String> collection){
@@ -122,12 +121,10 @@ public class SkCsvRow implements Iterable<String> {
         addAll(iterable, 0);
     }
 
-    public String set(int index, String value) {
+    public void set(int index, String value) {
         Objects.checkIndex(index, size);
         Objects.requireNonNull(value);
-        var old = cells[index];
         cells[index] = value;
-        return old;
     }
 
     public void fill(int amount) {
@@ -135,7 +132,7 @@ public class SkCsvRow implements Iterable<String> {
         version++;
         growIfNecessary(amount);
         Arrays.fill(cells, size, size + amount, "");
-        size = size + amount;
+        size += amount;
     }
 
     public String get(int index) {

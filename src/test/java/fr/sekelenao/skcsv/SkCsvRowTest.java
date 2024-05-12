@@ -206,7 +206,10 @@ final class SkCsvRowTest {
         void setAllIndices(int index) {
             var row = SkCsv.from(Collections.singleton("0;1;2;3;4;5;6;7")).getFirst();
             assertAll("Set all indices",
-                    () -> assertEquals(String.valueOf(index), row.set(index, "replaced")),
+                    () -> {
+                        row.set(index, "replaced");
+                        assertEquals("replaced", row.get(index));
+                    },
                     () -> assertEquals("replaced", row.get(index))
             );
         }
