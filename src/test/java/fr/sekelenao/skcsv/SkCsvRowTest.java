@@ -14,7 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
 final class SkCsvRowTest {
 
     private static SkCsvRow helloWorldRow() {
-        return new SkCsvRow("Hello", "world", "!");
+        var row = new SkCsvRow("Hello", "world");
+        row.add("!");
+        return row;
     }
 
     @Nested
