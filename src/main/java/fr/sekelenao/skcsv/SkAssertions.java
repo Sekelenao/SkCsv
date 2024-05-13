@@ -3,6 +3,7 @@ package fr.sekelenao.skcsv;
 import fr.sekelenao.skcsv.exception.InvalidCsvValueException;
 
 import java.util.Arrays;
+import java.util.ConcurrentModificationException;
 import java.util.Objects;
 
 final class SkAssertions {
@@ -33,6 +34,12 @@ final class SkAssertions {
 
     static void requireNonNulls(Object... objects) {
         Arrays.stream(objects).forEach(Objects::requireNonNull);
+    }
+
+    static void concurrentModification(int version, int expectedVersion){
+        if(version != expectedVersion){
+            throw new ConcurrentModificationException();
+        }
     }
 
 }

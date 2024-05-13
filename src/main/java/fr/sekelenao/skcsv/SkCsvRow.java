@@ -11,7 +11,7 @@ public class SkCsvRow implements Iterable<String> {
 
     private static final int DEFAULT_CAPACITY = 10;
 
-    private static final int GROWING_AMOUNT = 20;
+    private static final int GROWING_AMOUNT = 15;
 
     private int version = 0;
 
@@ -178,15 +178,58 @@ public class SkCsvRow implements Iterable<String> {
             @Override
             public String next() {
                 if(!hasNext()) throw new NoSuchElementException();
-                if(version != expectedVersion) throw new ConcurrentModificationException();
+                SkAssertions.concurrentModification(version, expectedVersion);
                 return cells[index++];
             }
         };
     }
 
+    private Spliterator<String> customSpliterator(int start, int end, String[] array, int v) {
+        return new Spliterator<>() {
+
+            private final int expectedVersion = v;
+
+            private int index = start;
+
+            @Override
+            public Spliterator<String> trySplit() {
+                var middle = (index + end) >>> 1;
+                if (middle == index) {
+                    return null;
+                }
+                var spliterator = customSpliterator(index, middle, array, expectedVersion);
+                index = middle;
+                return spliterator;
+            }
+
+            @Override
+            public boolean tryAdvance(Consumer<? super String> consumer) {
+                Objects.requireNonNull(consumer);
+                if (index < end) {
+                    consumer.accept(array[index++]);
+                    SkAssertions.concurrentModification(version, expectedVersion);
+                    return true;
+                }
+                return false;
+
+            }
+
+            @Override
+            public int characteristics() {
+                return SIZED | SUBSIZED | ORDERED | NONNULL;
+            }
+
+            @Override
+            public long estimateSize() {
+                return end - index;
+            }
+
+        };
+    }
+
     @Override
     public Spliterator<String> spliterator() {
-        return Spliterators.spliterator(cells, 0, size, Spliterator.NONNULL);
+        return customSpliterator(0, size, cells, version);
     }
 
     public void map(Function<? super String, String> mapper) {
