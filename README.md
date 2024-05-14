@@ -2,7 +2,9 @@
   <img src="logo.png" width="150">
 </p>
 
-# SkCsv library for Java 17+ (PREVIEW)
+<h1 align="center">
+  SkCsv library for Java 17+ (PREVIEW)
+</h1>
 
 ## Warning
 
