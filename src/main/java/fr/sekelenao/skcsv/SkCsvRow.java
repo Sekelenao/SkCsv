@@ -155,14 +155,6 @@ public class SkCsvRow implements Iterable<String>, RandomAccess {
     }
 
     @Override
-    public void forEach(Consumer<? super String> action) {
-        Objects.requireNonNull(action);
-        for (int i = 0; i < size; i++) {
-            action.accept(cells[i]);
-        }
-    }
-
-    @Override
     public Iterator<String> iterator() {
         return new Iterator<>() {
 
@@ -182,6 +174,14 @@ public class SkCsvRow implements Iterable<String>, RandomAccess {
                 return cells[index++];
             }
         };
+    }
+
+    @Override
+    public void forEach(Consumer<? super String> action) {
+        Objects.requireNonNull(action);
+        for (int i = 0; i < size; i++) {
+            action.accept(cells[i]);
+        }
     }
 
     private Spliterator<String> customSpliterator(int start, int end, String[] array, int v) {
