@@ -7,7 +7,7 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class SkCsvRow implements Iterable<String> {
+public class SkCsvRow implements Iterable<String>, RandomAccess {
 
     private static final int DEFAULT_CAPACITY = 10;
 
@@ -224,6 +224,14 @@ public class SkCsvRow implements Iterable<String> {
                 return end - index;
             }
 
+            @Override
+            public void forEachRemaining(Consumer<? super String> consumer) {
+                Objects.requireNonNull(consumer);
+                while(index < end){
+                    consumer.accept(cells[index++]);
+                }
+                SkAssertions.concurrentModification(version, expectedVersion);
+            }
         };
     }
 
