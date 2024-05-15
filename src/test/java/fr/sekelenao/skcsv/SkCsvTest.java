@@ -705,7 +705,7 @@ final class SkCsvTest {
             assertAll(
                     () -> assertThrows(IllegalStateException.class, lstItr::remove),
                     () -> assertThrows(IllegalStateException.class, () -> lstItr.set(emptyRow)),
-                    () -> assertThrows(NullPointerException.class, () -> {lstItr.set(null);}),
+                    () -> assertThrows(NullPointerException.class, () -> lstItr.set(null)),
                     () -> assertThrows(NullPointerException.class, () -> lstItr.forEachRemaining(null)),
                     () -> assertThrows(NullPointerException.class, () -> lstItr.add(null))
             );
