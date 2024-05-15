@@ -126,22 +126,22 @@ public class SkCsv implements Iterable<SkCsvRow> {
         internalRows.remove(index);
     }
 
-    public SkCsvRow removeFirst(){
+    public void removeFirst(){
         if(internalRows.isEmpty()) throw new NoSuchElementException();
-        return internalRows.removeFirst();
+        internalRows.removeFirst();
     }
 
-    public SkCsvRow removeLast(){
+    public void removeLast(){
         if(internalRows.isEmpty()) throw new NoSuchElementException();
-        return internalRows.removeLast();
+        internalRows.removeLast();
     }
 
     public boolean removeIf(Predicate<? super SkCsvRow> filter) {
         return internalRows.removeIf(Objects.requireNonNull(filter));
     }
 
-    public boolean contains(Object row) {
-        return row instanceof SkCsvRow skCsvRow && internalRows.contains(skCsvRow);
+    public boolean contains(Object object) {
+        return object != null && internalRows.stream().anyMatch(object::equals);
     }
 
     @Override
@@ -171,7 +171,7 @@ public class SkCsv implements Iterable<SkCsvRow> {
     public static Collector<SkCsvRow, ?, SkCsv> collector(){
         return Collector.of(
                 SkCsv::new, SkCsv::addAll,
-                (csv1, csv2) -> {csv1.addAll(csv2); return csv1;},
+                (csv1, csv2) -> { csv1.addAll(csv2); return csv1; },
                 Collector.Characteristics.IDENTITY_FINISH
         );
     }

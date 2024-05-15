@@ -498,7 +498,7 @@ final class SkCsvTest {
             int count = 0;
             var csv = csvTemplate(3);
             while (!csv.isEmpty()) {
-                assertEquals(csv.getFirst(), csv.removeFirst());
+                csv.removeFirst();
                 count++;
                 assertEquals(3 - count, csv.size());
             }
@@ -506,7 +506,7 @@ final class SkCsvTest {
             count = 0;
             var csv2 = csvTemplate(3);
             while (!csv2.isEmpty()) {
-                assertEquals(csv2.getLast(), csv2.removeLast());
+                csv2.removeLast();
                 count++;
                 assertEquals(3 - count, csv2.size());
             }
