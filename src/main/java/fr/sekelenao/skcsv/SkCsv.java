@@ -246,20 +246,17 @@ public class SkCsv implements Iterable<SkCsvRow> {
     }
 
     public static SkCsv from(Path path, SkCsvConfig config) throws IOException {
-        Objects.requireNonNull(path);
-        Objects.requireNonNull(config);
+        SkAssertions.requireNonNulls(path, config);
         return from(path, config, Charset.defaultCharset());
     }
 
     public static SkCsv from(Path path, Charset charset) throws IOException {
-        Objects.requireNonNull(path);
-        Objects.requireNonNull(charset);
+        SkAssertions.requireNonNulls(path, charset);
         return from(path, SkCsvConfig.SEMICOLON, charset);
     }
 
     public static SkCsv from(Path path) throws IOException {
-        Objects.requireNonNull(path);
-        return from(path, SkCsvConfig.SEMICOLON);
+        return from(Objects.requireNonNull(path), SkCsvConfig.SEMICOLON);
     }
 
     public static SkCsv from(Iterable<String> text, SkCsvConfig config) {
