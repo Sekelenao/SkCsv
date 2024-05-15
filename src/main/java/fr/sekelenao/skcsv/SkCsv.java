@@ -201,9 +201,13 @@ public class SkCsv implements Iterable<SkCsvRow> {
         };
     }
 
+    public ListIterator<SkCsvRow> listIterator(){
+        return listIterator(0);
+    }
+
     @Override
     public Iterator<SkCsvRow> iterator() {
-        return listIterator(0);
+        return listIterator();
     }
 
     @Override
