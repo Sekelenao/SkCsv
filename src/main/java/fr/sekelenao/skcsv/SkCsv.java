@@ -11,6 +11,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class SkCsv implements Iterable<SkCsvRow> {
 
@@ -144,18 +145,80 @@ public class SkCsv implements Iterable<SkCsvRow> {
         return object != null && internalRows.stream().anyMatch(object::equals);
     }
 
+    public ListIterator<SkCsvRow> listIterator(int index){
+        Objects.checkIndex(index, internalRows.size());
+        return new ListIterator<>() {
+
+            private final ListIterator<SkCsvRow> lstItr = internalRows.listIterator(index);
+
+            @Override
+            public boolean hasNext() {
+                return lstItr.hasNext();
+            }
+
+            @Override
+            public SkCsvRow next() {
+                return lstItr.next();
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return lstItr.hasPrevious();
+            }
+
+            @Override
+            public SkCsvRow previous() {
+                return lstItr.previous();
+            }
+
+            @Override
+            public int nextIndex() {
+                return lstItr.nextIndex();
+            }
+
+            @Override
+            public int previousIndex() {
+                return lstItr.previousIndex();
+            }
+
+            @Override
+            public void remove() {
+                lstItr.remove();
+            }
+
+            @Override
+            public void set(SkCsvRow row) {
+                Objects.requireNonNull(row);
+                lstItr.set(row);
+            }
+
+            @Override
+            public void add(SkCsvRow row) {
+                Objects.requireNonNull(row);
+                lstItr.add(row);
+            }
+
+        };
+    }
+
     @Override
     public Iterator<SkCsvRow> iterator() {
-        return internalRows.iterator();
+        return listIterator(0);
     }
 
     @Override
     public void forEach(Consumer<? super SkCsvRow> action) {
+        Objects.requireNonNull(action);
         internalRows.forEach(action);
     }
 
+    @Override
+    public Spliterator<SkCsvRow> spliterator() {
+        return Spliterators.spliterator(internalRows, Spliterator.NONNULL | Spliterator.SIZED | Spliterator.ORDERED);
+    }
+
     public Stream<SkCsvRow> stream() {
-        return internalRows.stream();
+        return StreamSupport.stream(spliterator(), false);
     }
 
     public void map(Function<? super SkCsvRow, SkCsvRow> mapper) {
