@@ -677,6 +677,40 @@ final class SkCsvTest {
             assertThrows(ConcurrentModificationException.class, it::next);
         }
 
+        @Test
+        @DisplayName("ListIterator is working")
+        void listIterator(){
+            var csv = csvTemplate();
+            var expected = 0;
+            var lstItr = csv.listIterator(0);
+            while (lstItr.hasNext()){
+                assertEquals(expected++, lstItr.nextIndex());
+                lstItr.next();
+            }
+            expected--;
+            while (lstItr.hasPrevious()){
+                assertEquals(expected--, lstItr.previousIndex());
+                lstItr.previous();
+            }
+            lstItr.add(new SkCsvRow("add"));
+            assertEquals(3, csv.size());
+        }
+
+        @Test
+        @DisplayName("ListIterator assertions")
+        void listIteratorAssertions(){
+            var csv = csvTemplate();
+            var lstItr = csv.listIterator();
+            var emptyRow = new SkCsvRow();
+            assertAll(
+                    () -> assertThrows(IllegalStateException.class, lstItr::remove),
+                    () -> assertThrows(IllegalStateException.class, () -> lstItr.set(emptyRow)),
+                    () -> assertThrows(NullPointerException.class, () -> {lstItr.set(null);}),
+                    () -> assertThrows(NullPointerException.class, () -> lstItr.forEachRemaining(null)),
+                    () -> assertThrows(NullPointerException.class, () -> lstItr.add(null))
+            );
+        }
+
     }
 
     @Nested
