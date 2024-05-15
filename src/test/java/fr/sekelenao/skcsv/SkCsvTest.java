@@ -307,11 +307,16 @@ final class SkCsvTest {
         @DisplayName("Insert all null assertions")
         void insertAllNullAssertions() {
             var emptyCsv = new SkCsv();
-            var lst = Collections.singleton((SkCsvRow) null);
+            var helloCsv = csvTemplate();
+            var lst = new ArrayList<SkCsvRow>();
+            lst.add(new SkCsvRow());
+            lst.add(null);
             assertAll("Insert all null",
                     () -> assertThrows(NullPointerException.class, () -> emptyCsv.insertAll(0, (Iterable<SkCsvRow>) null)),
                     () -> assertThrows(NullPointerException.class, () -> emptyCsv.insertAll(0, (SkCsvRow[]) null)),
-                    () -> assertThrows(NullPointerException.class, () -> emptyCsv.insertAll(0, lst))
+                    () -> assertThrows(NullPointerException.class, () -> emptyCsv.insertAll(0, lst)),
+                    () -> assertThrows(NullPointerException.class, () -> helloCsv.insertAll(1, lst)),
+                    () -> assertThrows(NullPointerException.class, () -> helloCsv.insertAll(1, new SkCsvRow[]{null}))
             );
         }
 
