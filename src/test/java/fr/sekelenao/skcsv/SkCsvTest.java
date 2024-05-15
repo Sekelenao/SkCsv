@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
@@ -1014,6 +1015,22 @@ final class SkCsvTest {
             csv.export(path, StandardOpenOption.CREATE);
             assertEquals(Files.readString(path).replace("\r", ""), csv.toString());
             Files.deleteIfExists(path);
+        }
+
+        @Test
+        @DisplayName("Export assertions")
+        void exportAssertions() {
+            var path = Paths.get("src", "test", "resources", "temp.csv");
+            var csv = new SkCsv(
+                    new SkCsvRow("", "world", "\njump\n", "cool"),
+                    new SkCsvRow("yeah", " ok", "")
+            );
+            assertAll("Export assertions",
+                    () -> assertThrows(NullPointerException.class, () -> csv.export(null, StandardCharsets.UTF_8)),
+                    () -> assertThrows(NullPointerException.class, () -> csv.export(path, (OpenOption) null)),
+                    () -> assertThrows(NullPointerException.class, () -> csv.export(path, StandardCharsets.UTF_8, (OpenOption) null)),
+                    () -> assertThrows(NullPointerException.class, () -> csv.export(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE, null))
+            );
         }
 
     }
