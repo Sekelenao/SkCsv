@@ -198,6 +198,12 @@ public class SkCsv implements Iterable<SkCsvRow> {
                 lstItr.add(row);
             }
 
+            @Override
+            public void forEachRemaining(Consumer<? super SkCsvRow> action) {
+                Objects.requireNonNull(action);
+                lstItr.forEachRemaining(action);
+            }
+
         };
     }
 
