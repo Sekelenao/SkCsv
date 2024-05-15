@@ -14,26 +14,26 @@ import java.util.stream.Stream;
 
 public class SkCsv implements Iterable<SkCsvRow> {
 
-    private final List<SkCsvRow> skCsvRows = new ArrayList<>();
+    private final LinkedList<SkCsvRow> internalRows = new LinkedList<>();
 
     private SkCsvConfig config = SkCsvConfig.SEMICOLON;
 
     public SkCsv() {}
 
-    public SkCsv(SkCsvRow... skCsvRows) {
-        Objects.requireNonNull(skCsvRows);
-        for (var row : skCsvRows) {
+    public SkCsv(SkCsvRow... rows) {
+        Objects.requireNonNull(rows);
+        for (var row : rows) {
             Objects.requireNonNull(row);
-            this.skCsvRows.add(row);
+            internalRows.add(row);
         }
     }
 
-    public SkCsv(Iterable<SkCsvRow> csvRows) {
-        Objects.requireNonNull(csvRows);
-        csvRows.forEach(row -> {
+    public SkCsv(Iterable<SkCsvRow> rows) {
+        Objects.requireNonNull(rows);
+        for (var row : rows) {
             Objects.requireNonNull(row);
-            this.skCsvRows.add(row);
-        });
+            internalRows.add(row);
+        }
     }
 
     public SkCsv configure(SkCsvConfig config) {
@@ -46,54 +46,54 @@ public class SkCsv implements Iterable<SkCsvRow> {
     }
 
     public int size(){
-        return skCsvRows.size();
+        return internalRows.size();
     }
 
     public boolean isEmpty(){
-        return skCsvRows.isEmpty();
+        return internalRows.isEmpty();
     }
 
     public void add(SkCsvRow row) {
         Objects.requireNonNull(row);
-        skCsvRows.add(row);
-    }
-
-    public void addAll(Iterable<SkCsvRow> rows){
-        Objects.requireNonNull(rows);
-        for (var row : rows) {
-            Objects.requireNonNull(row);
-            skCsvRows.add(row);
-        }
+        internalRows.addLast(row);
     }
 
     public void addAll(SkCsvRow... rows){
         Objects.requireNonNull(rows);
         for (var row : rows) {
             Objects.requireNonNull(row);
-            skCsvRows.add(row);
+            internalRows.add(row);
+        }
+    }
+
+    public void addAll(Iterable<SkCsvRow> rows){
+        Objects.requireNonNull(rows);
+        for (var row : rows) {
+            Objects.requireNonNull(row);
+            internalRows.add(row);
         }
     }
 
     public void insert(int position, SkCsvRow row) {
-        SkAssertions.validPosition(position, skCsvRows.size());
+        SkAssertions.validPosition(position, internalRows.size());
         Objects.requireNonNull(row);
-        skCsvRows.add(position, row);
+        internalRows.add(position, row);
     }
 
     public void insertAll(int position, SkCsvRow... rows) {
-        SkAssertions.validPosition(position, skCsvRows.size());
+        SkAssertions.validPosition(position, this.internalRows.size());
         Objects.requireNonNull(rows);
-        if (position == skCsvRows.size()) {
-            addAll(rows);
-        } else {
-            skCsvRows.addAll(position, Arrays.asList(rows));
+        var lstItr = internalRows.listIterator(position);
+        for (var row : rows) {
+            Objects.requireNonNull(row);
+            lstItr.add(row);
         }
     }
 
     public void insertAll(int position, Iterable<SkCsvRow> rows) {
-        SkAssertions.validPosition(position, skCsvRows.size());
+        SkAssertions.validPosition(position, this.internalRows.size());
         Objects.requireNonNull(rows);
-        if (position == skCsvRows.size()) {
+        if (position == this.internalRows.size()) {
             addAll(rows);
         } else {
             var lst = new ArrayList<SkCsvRow>();
@@ -101,71 +101,71 @@ public class SkCsv implements Iterable<SkCsvRow> {
                 Objects.requireNonNull(row);
                 lst.add(row);
             }
-            skCsvRows.addAll(position, lst);
+            this.internalRows.addAll(position, lst);
         }
     }
 
     public SkCsvRow set(int index, SkCsvRow row) {
-        Objects.checkIndex(index, skCsvRows.size());
+        Objects.checkIndex(index, internalRows.size());
         Objects.requireNonNull(row);
-        return skCsvRows.set(index, row);
+        return internalRows.set(index, row);
     }
 
     public SkCsvRow get(int index) {
-        Objects.checkIndex(index, skCsvRows.size());
-        return skCsvRows.get(index);
+        Objects.checkIndex(index, internalRows.size());
+        return internalRows.get(index);
     }
 
     public SkCsvRow getFirst() {
-        if (skCsvRows.isEmpty()) throw new NoSuchElementException();
-        return skCsvRows.get(0);
+        if (internalRows.isEmpty()) throw new NoSuchElementException();
+        return internalRows.get(0);
     }
 
     public SkCsvRow getLast() {
-        if (skCsvRows.isEmpty()) throw new NoSuchElementException();
-        return skCsvRows.get(skCsvRows.size() - 1);
+        if (internalRows.isEmpty()) throw new NoSuchElementException();
+        return internalRows.get(internalRows.size() - 1);
     }
 
     public SkCsvRow remove(int index) {
-        Objects.checkIndex(index, skCsvRows.size());
-        return skCsvRows.remove(index);
+        Objects.checkIndex(index, internalRows.size());
+        return internalRows.remove(index);
     }
 
     public SkCsvRow removeFirst(){
-        if(skCsvRows.isEmpty()) throw new NoSuchElementException();
-        return skCsvRows.remove(0);
+        if(internalRows.isEmpty()) throw new NoSuchElementException();
+        return internalRows.remove(0);
     }
 
     public SkCsvRow removeLast(){
-        if(skCsvRows.isEmpty()) throw new NoSuchElementException();
-        return skCsvRows.remove(skCsvRows.size() - 1);
+        if(internalRows.isEmpty()) throw new NoSuchElementException();
+        return internalRows.remove(internalRows.size() - 1);
     }
 
     public boolean removeIf(Predicate<? super SkCsvRow> filter) {
-        return skCsvRows.removeIf(Objects.requireNonNull(filter));
+        return internalRows.removeIf(Objects.requireNonNull(filter));
     }
 
     public boolean contains(Object row) {
-        return row instanceof SkCsvRow skCsvRow && skCsvRows.contains(skCsvRow);
+        return row instanceof SkCsvRow skCsvRow && internalRows.contains(skCsvRow);
     }
 
     @Override
     public Iterator<SkCsvRow> iterator() {
-        return skCsvRows.iterator();
+        return internalRows.iterator();
     }
 
     @Override
     public void forEach(Consumer<? super SkCsvRow> action) {
-        skCsvRows.forEach(action);
+        internalRows.forEach(action);
     }
 
     public Stream<SkCsvRow> stream() {
-        return skCsvRows.stream();
+        return internalRows.stream();
     }
 
     public void map(Function<? super SkCsvRow, SkCsvRow> mapper) {
         Objects.requireNonNull(mapper);
-        var it = skCsvRows.listIterator();
+        var it = internalRows.listIterator();
         while (it.hasNext()) {
             var mappedValue = mapper.apply(it.next());
             Objects.requireNonNull(mappedValue);
@@ -220,7 +220,7 @@ public class SkCsv implements Iterable<SkCsvRow> {
         SkAssertions.requireNonNulls(path, charset, openOptions);
         var formatter = new CsvFormatter(config);
         try (var writer = Files.newBufferedWriter(path, charset, openOptions)) {
-            for (var row : skCsvRows) {
+            for (var row : internalRows) {
                 writer.write(formatter.toCsvString(row));
                 writer.newLine();
             }
@@ -237,14 +237,14 @@ public class SkCsv implements Iterable<SkCsvRow> {
     public boolean equals(Object other) {
         Objects.requireNonNull(other);
         return other instanceof SkCsv otherCsv
-                && otherCsv.skCsvRows.size() == skCsvRows.size()
-                && otherCsv.skCsvRows.equals(skCsvRows);
+                && otherCsv.internalRows.size() == internalRows.size()
+                && otherCsv.internalRows.equals(internalRows);
     }
 
     @Override
     public int hashCode() {
-        int hash = skCsvRows.size();
-        for (var row : skCsvRows) {
+        int hash = internalRows.size();
+        for (var row : internalRows) {
             hash ^= row.hashCode();
         }
         return hash;
@@ -254,7 +254,7 @@ public class SkCsv implements Iterable<SkCsvRow> {
     public String toString() {
         var formatter = new CsvFormatter(config);
         var builder = new StringBuilder();
-        for(var row : skCsvRows){
+        for(var row : internalRows){
             builder.append(formatter.toCsvString(row)).append("\n");
         }
         return builder.toString();
