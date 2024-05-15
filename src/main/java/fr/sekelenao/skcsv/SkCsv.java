@@ -260,15 +260,13 @@ public class SkCsv implements Iterable<SkCsvRow> {
     }
 
     public static SkCsv from(Iterable<String> text, SkCsvConfig config) {
-        Objects.requireNonNull(text);
-        Objects.requireNonNull(config);
+        SkAssertions.requireNonNulls(text, config);
         var formatter = new CsvFormatter(config);
         return formatter.split(text);
     }
 
     public static SkCsv from(Iterable<String> text) {
-        Objects.requireNonNull(text);
-        return from(text, SkCsvConfig.SEMICOLON);
+        return from(Objects.requireNonNull(text), SkCsvConfig.SEMICOLON);
     }
 
     public void export(Path path, Charset charset, OpenOption... openOptions) throws IOException {
