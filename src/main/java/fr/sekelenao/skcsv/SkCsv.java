@@ -100,10 +100,10 @@ public class SkCsv implements Iterable<SkCsvRow> {
         }
     }
 
-    public SkCsvRow set(int index, SkCsvRow row) {
+    public void set(int index, SkCsvRow row) {
         Objects.checkIndex(index, internalRows.size());
         Objects.requireNonNull(row);
-        return internalRows.set(index, row);
+        internalRows.set(index, row);
     }
 
     public SkCsvRow get(int index) {
@@ -113,12 +113,12 @@ public class SkCsv implements Iterable<SkCsvRow> {
 
     public SkCsvRow getFirst() {
         if (internalRows.isEmpty()) throw new NoSuchElementException();
-        return internalRows.get(0);
+        return internalRows.getFirst();
     }
 
     public SkCsvRow getLast() {
         if (internalRows.isEmpty()) throw new NoSuchElementException();
-        return internalRows.get(internalRows.size() - 1);
+        return internalRows.getLast();
     }
 
     public SkCsvRow remove(int index) {
@@ -160,11 +160,11 @@ public class SkCsv implements Iterable<SkCsvRow> {
 
     public void map(Function<? super SkCsvRow, SkCsvRow> mapper) {
         Objects.requireNonNull(mapper);
-        var it = internalRows.listIterator();
-        while (it.hasNext()) {
-            var mappedValue = mapper.apply(it.next());
+        var lstItr = internalRows.listIterator();
+        while (lstItr.hasNext()) {
+            var mappedValue = mapper.apply(lstItr.next());
             Objects.requireNonNull(mappedValue);
-            it.set(mappedValue);
+            lstItr.set(mappedValue);
         }
     }
 

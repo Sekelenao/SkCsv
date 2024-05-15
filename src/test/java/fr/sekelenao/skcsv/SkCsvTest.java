@@ -272,10 +272,10 @@ final class SkCsvTest {
             assertAll("Insert all at start",
                     () -> assertEquals(6, csv.size()),
                     () -> assertEquals("""
-                                    
-                                    
+                                                                        
+                                                                        
                                     (;and Meta-verse;)
-                                    
+                                                                        
                                     ""\"Hello";world;"!;"
                                     'Hello,;""\"second,""\";world;!';
                                     """
@@ -296,7 +296,7 @@ final class SkCsvTest {
                                     1
                                     2
                                     (;and Meta-verse;)
-                                    
+                                                                        
                                     'Hello,;""\"second,""\";world;!';
                                     """
                             , csv.toString())
@@ -377,8 +377,10 @@ final class SkCsvTest {
         void setAllIndices(int index) {
             var csv = csvTemplate(8);
             assertAll("Set all indices",
-                    () -> assertEquals(new SkCsvRow(String.valueOf(index)), csv.set(index, new SkCsvRow("replaced"))),
-                    () -> assertEquals("replaced", csv.get(index).getFirst())
+                    () -> {
+                        csv.set(index, new SkCsvRow("replaced"));
+                        assertEquals("replaced", csv.get(index).getFirst());
+                    }
             );
         }
 
@@ -766,7 +768,7 @@ final class SkCsvTest {
 
         @Test
         @DisplayName("Parallel collector")
-        void ParallelCollector(){
+        void ParallelCollector() {
             var result = IntStream.range(0, 1000).parallel()
                     .mapToObj(i -> new SkCsvRow(String.valueOf(i)))
                     .collect(SkCsv.collector());
