@@ -286,8 +286,7 @@ public class SkCsv implements Iterable<SkCsvRow> {
     }
 
     public void export(Path path, OpenOption... openOptions) throws IOException {
-        Objects.requireNonNull(path);
-        Objects.requireNonNull(openOptions);
+        SkAssertions.requireNonNulls(path, openOptions);
         export(path, Charset.defaultCharset(), openOptions);
     }
 
