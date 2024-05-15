@@ -453,11 +453,12 @@ final class SkCsvRowTest {
             var emptyRow = new SkCsvRow();
             var row = helloWorldRow();
             row.stream().filter(s -> s.length() > 1).forEach(lst::add);
-
+            var newRow = row.stream().parallel().filter(s -> s.length() > 1).collect(SkCsvRow.collector());
             assertAll("Stream basics",
                     () -> assertEquals("Hello world", String.join(" ", lst)),
                     () -> assertEquals(2, lst.size()),
-                    () -> assertDoesNotThrow(emptyRow::stream)
+                    () -> assertDoesNotThrow(emptyRow::stream),
+                    () -> assertEquals(2, newRow.size())
             );
         }
 
