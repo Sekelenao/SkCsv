@@ -880,16 +880,14 @@ final class SkCsvTest {
         @Test
         @DisplayName("Null assertions")
         void fromTextNull() {
+            var config = new SkCsvConfig(' ', '@');
+            var singleton = Collections.singleton("null");
+            var path = Paths.get("src", "test", "resources", "temp.csv");
             assertAll("Null assertions",
                     () -> assertThrows(NullPointerException.class, () -> SkCsv.from((Iterable<String>) null)),
-                    () -> {
-                        var config = new SkCsvConfig(' ', '@');
-                        assertThrows(NullPointerException.class, () -> SkCsv.from((List<String>) null, config));
-                    },
-                    () -> {
-                        var singleton = Collections.singleton("null");
-                        assertThrows(NullPointerException.class, () -> SkCsv.from(singleton, null));
-                    }
+                    () -> assertThrows(NullPointerException.class, () -> SkCsv.from((List<String>) null, config)),
+                    () -> assertThrows(NullPointerException.class, () -> SkCsv.from(singleton, null)),
+                    () -> assertThrows(NullPointerException.class, () -> SkCsv.from(path, config, null))
             );
         }
 
