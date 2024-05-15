@@ -121,19 +121,19 @@ public class SkCsv implements Iterable<SkCsvRow> {
         return internalRows.getLast();
     }
 
-    public SkCsvRow remove(int index) {
+    public void remove(int index) {
         Objects.checkIndex(index, internalRows.size());
-        return internalRows.remove(index);
+        internalRows.remove(index);
     }
 
     public SkCsvRow removeFirst(){
         if(internalRows.isEmpty()) throw new NoSuchElementException();
-        return internalRows.remove(0);
+        return internalRows.removeFirst();
     }
 
     public SkCsvRow removeLast(){
         if(internalRows.isEmpty()) throw new NoSuchElementException();
-        return internalRows.remove(internalRows.size() - 1);
+        return internalRows.removeLast();
     }
 
     public boolean removeIf(Predicate<? super SkCsvRow> filter) {

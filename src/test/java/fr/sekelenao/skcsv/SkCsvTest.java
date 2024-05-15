@@ -272,10 +272,10 @@ final class SkCsvTest {
             assertAll("Insert all at start",
                     () -> assertEquals(6, csv.size()),
                     () -> assertEquals("""
-                                                                        
-                                                                        
+                                    
+                                    
                                     (;and Meta-verse;)
-                                                                        
+                                    
                                     ""\"Hello";world;"!;"
                                     'Hello,;""\"second,""\";world;!';
                                     """
@@ -296,7 +296,7 @@ final class SkCsvTest {
                                     1
                                     2
                                     (;and Meta-verse;)
-                                                                        
+                                    
                                     'Hello,;""\"second,""\";world;!';
                                     """
                             , csv.toString())
@@ -459,8 +459,8 @@ final class SkCsvTest {
         @DisplayName("Remove basic tests")
         void remove(int index) {
             var csv = csvTemplate(2);
+            csv.remove(index);
             assertAll("Remove basic tests",
-                    () -> assertEquals(new SkCsvRow(String.valueOf(index)), csv.remove(index)),
                     () -> assertEquals(1, csv.size()),
                     () -> assertDoesNotThrow(() -> csv.remove(0)),
                     () -> assertEquals(0, csv.size())
