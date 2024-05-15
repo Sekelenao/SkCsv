@@ -93,15 +93,10 @@ public class SkCsv implements Iterable<SkCsvRow> {
     public void insertAll(int position, Iterable<SkCsvRow> rows) {
         SkAssertions.validPosition(position, this.internalRows.size());
         Objects.requireNonNull(rows);
-        if (position == this.internalRows.size()) {
-            addAll(rows);
-        } else {
-            var lst = new ArrayList<SkCsvRow>();
-            for (var row : rows) {
-                Objects.requireNonNull(row);
-                lst.add(row);
-            }
-            this.internalRows.addAll(position, lst);
+        var lstItr = internalRows.listIterator(position);
+        for (var row : rows) {
+            Objects.requireNonNull(row);
+            lstItr.add(row);
         }
     }
 
