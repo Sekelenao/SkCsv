@@ -17,128 +17,54 @@ SkCsv is a library designed for easy data manipulation, simplifying the import a
 worry about special characters or other complexities during parsing. The focus has been directed towards prioritizing 
 speed and security. The level of abstraction allows you to forget that you're working with a CSV format. 
 
+## Features
+
+### Import datas from a file
+
+To import data from a file, you can use the static method from of the SkCsv class. This method has several signatures. If nothing is specified as an argument for the CSV configuration, the default configuration ```SkCsvConfig.SEMICOLON``` is used. As for the charset, ```Charset.defaultCharset()``` is used.
+
+```java
+SkCsv csv = SkCsv.from(Paths.get("template.csv"), SkCsvConfig.COMMA, StandardCharsets.UTF_8);
+```
+
+The returned CSV will be configured with the default configuration. The configuration provided as a parameter is only used for parsing.
+
+### Create a CSV from scratch with Java
+
+To create a CSV from scratch with Java, you simply need to instantiate an object of the ```SkCsv``` class. This object will contain ```SkCsvRow``` objects, which represent the rows of the file. Here's how to create a CSV containing two rows with the varargs constructor :
+
+```java
+SkCsv csv = new SkCsv(
+    new SkCsvRow("Language", "Type", "Rate"),
+    new SkCsvRow("Java", "POO", "10/10")
+);
+```
+
+You can also create a SkCsv an ```Iterable``` of ```SkCsvRow``` or an empty SkCsv with the default constructor.
+
+```java
+var secondCsv = new SkCsv(csv);
+```
+
+```java
+var thirdCsv = new SkCsv(Collections.singleton(new SkCsvRow()));
+```
+
+### Configure the delimiter and the quotes
+
+To configure a CSV, you just need to use the ```SkCsvConfig``` class. You can instantiate this class yourself or use its constants ```SEMICOLON``` and ```COMMA```.
+
+```java
+csv.configure(SkCsvConfig.SEMICOLON);
+```
+
+```java
+csv.configure(new SkCsvConfig('/', '\''));
+```
+
+This configuration will be used during export and conversion to a String.
+
 ## Examples
-
-### Explore a French plant dataset
-
-For this initial example, we will utilize a dataset available at 
-https://www.data.gouv.fr/fr/datasets/inventaire-de-la-flore/#/resources. For each line, excluding the first one 
-(headers), we will have:
-
-Scientific name; French name; Municipality; Identifier; Observation date.
-
-```
-Ranunculus bulbosus L.;Renoncule bulbeuse;VAUCRESSON;92076;2003-08-04
-Ranunculus repens L.;Renoncule rampante;VAUCRESSON;92076;2003-08-04
-Diplotaxis tenuifolia (L.) DC.;Roquette sauvage;VAUCRESSON;92076;2003-08-04
-```
-
-#### Data validation
-
-It's noticeable that the dataset contains entries with 6 columns; thus, we will proceed to remove them. To do this, we
-will import the file into our Java object. This object will handle everything; there's no need to worry about entries
-containing the separator or quotes within values, as SkCsv manages this for us.
-
-```java
-public final class Main {
-
-    private static final int EXPECTED_ROW_SIZE = 5;
-
-    public static void main(String[] args) throws IOException {
-        var csv = SkCsv.from(Paths.get("inventaire-de-la-flore.csv")).stream().skip(1)
-                .filter(row -> row.size() == EXPECTED_ROW_SIZE)
-                .collect(SkCsv.collector());
-    }
-
-}
-```
-
-#### Statistics
-
-Now, we all wonder how many different plants are inventoried in the departmental territory of Hauts-de-Seine.
-
-```java
-public final class Main {
-
-    private static final int EXPECTED_ROW_SIZE = 5;
-
-    private static final int NAME_INDEX = 1;
-
-    public static void main(String[] args) throws IOException {
-        var plantNamesSet = new HashSet<String>();
-        var csv = SkCsv.from(Paths.get("inventaire-de-la-flore.csv")).stream().skip(1)
-                .filter(row -> row.size() == EXPECTED_ROW_SIZE)
-                .collect(SkCsv.collector());
-        csv.forEach(row -> plantNamesSet.add(row.get(NAME_INDEX)));
-        System.out.println(plantNamesSet.size());
-    }
-
-}
-```
-
-#### Export
-
-We would like to export this data to a CSV. To do this, we will use the export method of the SkCsv class. In the program below, we have added a second filter that will remove duplicates in the CSV itself.
-
-```java
-public final class Main {
-
-    private static final int EXPECTED_ROW_SIZE = 5;
-
-    private static final int NAME_INDEX = 1;
-
-    public static void main(String[] args) throws IOException {
-        var plantNamesSet = new HashSet<String>();
-        var csv = SkCsv.from(Paths.get("inventaire-de-la-flore.csv")).stream().skip(1)
-                .filter(row -> row.size() == EXPECTED_ROW_SIZE)
-                .filter(row -> {
-                    var name = row.get(NAME_INDEX);
-                    if(!plantNamesSet.contains(name)) {
-                        plantNamesSet.add(name);
-                        return true;
-                    }
-                    return false;
-                })
-                .collect(SkCsv.collector());
-        csv.export(Paths.get("out-skcsv-de-la-flore.csv"), StandardOpenOption.CREATE);
-    }
-
-}
-```
-
-#### Format export
-
-Finally, we would like to keep only the plant names in the produced CSV. To do this, we will use the map function of the
-stream API and recreate the lines by keeping only the indexes that interest us. Furthermore, to add a twist, we notice
-that some plant names contain commas. However, we still want to export the CSV with commas as separators. Well, SkCsv
-will handle that for us.
-
-```java
-public final class Main {
-
-    private static final int EXPECTED_ROW_SIZE = 5;
-
-    private static final int NAME_INDEX = 1;
-
-    public static void main(String[] args) throws IOException {
-        var plantNamesSet = new HashSet<String>();
-        var csv = SkCsv.from(Paths.get("inventaire-de-la-flore.csv")).stream().skip(1)
-                .filter(row -> row.size() == EXPECTED_ROW_SIZE)
-                .filter(row -> {
-                    var name = row.get(NAME_INDEX);
-                    if(!plantNamesSet.contains(name)) {
-                        plantNamesSet.add(name);
-                        return true;
-                    }
-                    return false;
-                })
-                .map(row -> new SkCsvRow(row.get(0), row.get(1)))
-                .collect(SkCsv.collector());
-        csv.configure(SkCsvConfig.COMMA).export(Paths.get("out-skcsv-de-la-flore.csv"), StandardOpenOption.CREATE);
-    }
-
-}
-```
 
 ### Export records without modifying the previous code
 
@@ -148,7 +74,7 @@ wary of tampering with these precious records, we don't want to add any code ins
 Therefore, we will add an annotation to designate the data that we want to export.
 
 ```java
-public record BankAccount(@CsvColumn String bankName, @CsvColumn UUID uuid, @CsvColumn BigDecimal balance, int secretCode){}
+public record BankAccount(@CsvColumn String bankName, @CsvColumn UUID uuid, @CsvColumn BigDecimal balance, int secretCode)
 ```
 
 Let's imagine that within the application, we have a way to obtain these records either as an Iterable or as an Iterator,
@@ -167,11 +93,7 @@ private static final Iterator<BankAccount> BANK_ACCOUNT_ITERATOR = new Iterator<
     }
 
     @Override
-    public BankAccount next() {
-        if (!hasNext()) throw new NoSuchElementException();
-        index++;
-        return new BankAccount("OnlyBank", UUID.randomUUID(), BigDecimal.valueOf(Math.random() * 100), RANDOM.nextInt());
-    }
+    public BankAccount next() { ... }
 
 };
 ```
