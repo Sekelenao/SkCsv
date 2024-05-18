@@ -9,15 +9,40 @@ import java.util.stream.StreamSupport;
 
 public class SkCsvRow implements Iterable<String>, RandomAccess {
 
+    /**
+     * Default capacity for the storage array of CSV row values.
+     */
     private static final int DEFAULT_CAPACITY = 10;
 
+    /**
+     * Amount by which the storage array of CSV row values grows when it needs to be resized.
+     */
     private static final int GROWING_AMOUNT = 15;
 
+    /**
+     * Current modification count of the CSV row storage class.
+     * <p>
+     * This indicates the current modification count of the CSV row storage class.
+     * It is used for managing concurrent modifications and detecting concurrent modification exceptions.
+     */
     private int version = 0;
 
+    /**
+     * Array storing the row values.
+     * <p>
+     * This array stores the individual values of the CSV row.
+     * It dynamically resizes as needed when more values are added.
+     */
     private String[] cells;
 
+    /**
+     * Current size of the CSV row storage array.
+     * <p>
+     * This represents the number of values currently stored in the CSV row storage array.
+     * It may be less than or equal to the length of the array.
+     */
     private int size;
+
 
     public SkCsvRow() {
         this.cells = new String[DEFAULT_CAPACITY];
