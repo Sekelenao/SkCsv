@@ -116,9 +116,8 @@ final class CsvFormatter {
 
     static boolean isEscapedChar(char character) {
         return switch (character) {
-            case '\n', '\r', '\b', '\f', '\0':
-                yield true;
-            default: yield false;
+            case '\n', '\r', '\b', '\f', '\0'-> true;
+            default -> false;
         };
     }
 
