@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+/**
+ * Utility class for exporting records to CSV files.
+ * This class provides static methods for exporting records to CSV format.
+ */
 public final class SkCsvRecords {
 
     /**
