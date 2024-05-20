@@ -70,7 +70,7 @@ final class SkCsvRecordTest {
             new Food("Fish", "Blue", "Contains fish...")
     );
 
-    private static final Iterator<BankAccount> BANK_ACCOUNT_ITERATOR = new Iterator<>() {
+    private static final Iterable<BankAccount> BANK_ACCOUNT_ITERABLE = () -> new Iterator<>() {
 
         private int index;
 
@@ -87,6 +87,7 @@ final class SkCsvRecordTest {
             index++;
             return new BankAccount("OnlyBank", UUID.randomUUID(), RANDOM.nextDouble(), FOODS.get(RANDOM.nextInt(FOODS.size())));
         }
+
     };
 
     @Nested
@@ -143,7 +144,7 @@ final class SkCsvRecordTest {
         @Timeout(3)
         @Order(1)
         void exportALot() {
-            assertDoesNotThrow(() -> SkCsvRecords.export(PRODUCED_PATH, BANK_ACCOUNT_ITERATOR, SkCsvConfig.SEMICOLON, StandardOpenOption.CREATE));
+            assertDoesNotThrow(() -> SkCsvRecords.export(PRODUCED_PATH, BANK_ACCOUNT_ITERABLE, SkCsvConfig.SEMICOLON, StandardOpenOption.CREATE));
         }
 
         @Test

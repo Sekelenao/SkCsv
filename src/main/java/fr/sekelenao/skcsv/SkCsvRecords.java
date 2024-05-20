@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -55,12 +54,11 @@ public final class SkCsvRecords {
 
     };
 
-    public static void export(Path path, Iterator<? extends Record> records, SkCsvConfig config, OpenOption... options) throws IOException {
+    public static void export(Path path, Iterable<? extends Record> records, SkCsvConfig config, OpenOption... options) throws IOException {
         SkAssertions.requireNonNulls(path, records, config, options);
         var formatter = new CsvFormatter(config);
         try (var writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, options)) {
-            while (records.hasNext()) {
-                var rcd = records.next();
+            for (var rcd : records) {
                 var values = CACHE.get(rcd.getClass()).stream()
                         .map(f -> f.apply(rcd))
                         .toList();
@@ -70,9 +68,9 @@ public final class SkCsvRecords {
         }
     }
 
-    public static void export(Path path, Iterable<? extends Record> records, SkCsvConfig config, OpenOption... openOptions) throws IOException {
-        SkAssertions.requireNonNulls(path, records, config, openOptions);
-        export(path, records.iterator(), config, openOptions);
+    public static void export(Path path, Iterable<? extends Record> records, OpenOption... options) throws IOException {
+        SkAssertions.requireNonNulls(path, records, options);
+        export(path, records, SkCsvConfig.SEMICOLON, options);
     }
 
 }
