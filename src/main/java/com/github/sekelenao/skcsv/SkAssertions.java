@@ -1,6 +1,6 @@
-package fr.sekelenao.skcsv;
+package com.github.sekelenao.skcsv;
 
-import fr.sekelenao.skcsv.exception.InvalidCsvValueException;
+import com.github.sekelenao.skcsv.exception.InvalidCsvValueException;
 
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;

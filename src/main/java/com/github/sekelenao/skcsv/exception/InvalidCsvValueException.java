@@ -1,4 +1,4 @@
-package fr.sekelenao.skcsv.exception;
+package com.github.sekelenao.skcsv.exception;
 
 /**
  * Exception thrown when an invalid value is encountered in a CSV field.

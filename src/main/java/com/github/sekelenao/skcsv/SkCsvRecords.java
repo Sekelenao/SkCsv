@@ -1,4 +1,4 @@
-package fr.sekelenao.skcsv;
+package com.github.sekelenao.skcsv;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

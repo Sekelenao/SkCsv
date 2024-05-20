@@ -1,4 +1,4 @@
-package fr.sekelenao.skcsv.exception;
+package com.github.sekelenao.skcsv.exception;
 
 /**
  * Exception thrown when a CSV parsing error occurs.

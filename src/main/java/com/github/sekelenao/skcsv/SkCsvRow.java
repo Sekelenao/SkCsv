@@ -1,4 +1,4 @@
-package fr.sekelenao.skcsv;
+package com.github.sekelenao.skcsv;
 
 import java.util.*;
 import java.util.function.Consumer;

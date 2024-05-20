@@ -1,7 +1,7 @@
-package fr.sekelenao.skcsv;
+package com.github.sekelenao.skcsv;
 
-import fr.sekelenao.skcsv.exception.CsvParsingException;
-import fr.sekelenao.skcsv.exception.InvalidCsvValueException;
+import com.github.sekelenao.skcsv.exception.CsvParsingException;
+import com.github.sekelenao.skcsv.exception.InvalidCsvValueException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

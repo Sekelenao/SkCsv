@@ -1,4 +1,4 @@
-package fr.sekelenao.skcsv;
+package com.github.sekelenao.skcsv;
 
 /**
  * Configuration class for CSV files.
