@@ -17,52 +17,24 @@ SkCsv is a library designed for easy data manipulation, simplifying the import a
 worry about special characters or other complexities during parsing. The focus has been directed towards prioritizing 
 speed and security. The level of abstraction allows you to forget that you're working with a CSV format. 
 
-## Features
+## SkCsv Library Architecture
 
-### Import datas from a file
+### 1. Classes for CSV File Manipulation
 
-To import data from a file, you can use the static method from of the SkCsv class. This method has several signatures. If nothing is specified as an argument for the CSV configuration, the default configuration ```SkCsvConfig.SEMICOLON``` is used. As for the charset, ```Charset.defaultCharset()``` is used.
+- **SkCsvRow**: Represents a row in a CSV file. Provides methods for manipulating and accessing row data.
+- **SkCsv**: Represents a CSV file as a whole. Allows manipulation of file rows and operations such as adding, 
+removing, and exporting data.
 
-```java
-SkCsv csv = SkCsv.from(Paths.get("template.csv"), SkCsvConfig.COMMA, StandardCharsets.UTF_8);
-```
+### 2. Classes for Record export
 
-The returned CSV will be configured with the default configuration. The configuration provided as a parameter is only used for parsing.
+- **CsvColumn**: Annotation used to mark components of a record that should be exported to a CSV file.
+  Annotated components will be included in the CSV export.
+- **SkCsvRecords**: Provides utilities for exporting records (objects) to CSV files. 
+Contains methods for managing object data export to a CSV file.
 
-### Create a CSV from scratch with Java
+### 3. Utility Classes
 
-To create a CSV from scratch with Java, you simply need to instantiate an object of the ```SkCsv``` class. This object will contain ```SkCsvRow``` objects, which represent the rows of the file. Here's how to create a CSV containing two rows with the varargs constructor :
-
-```java
-SkCsv csv = new SkCsv(
-    new SkCsvRow("Language", "Type", "Rate"),
-    new SkCsvRow("Java", "POO", "10/10")
-);
-```
-
-You can also create a SkCsv an ```Iterable``` of ```SkCsvRow``` or an empty SkCsv with the default constructor.
-
-```java
-var secondCsv = new SkCsv(csv);
-```
-
-```java
-var thirdCsv = new SkCsv(Collections.singleton(new SkCsvRow()));
-```
-
-### Configure the delimiter and the quotes
-
-To configure a CSV, you just need to use the ```SkCsvConfig``` class. You can instantiate this class yourself or use its constants ```SEMICOLON``` and ```COMMA```.
-
-```java
-csv.configure(SkCsvConfig.SEMICOLON);
-```
-
-```java
-csv.configure(new SkCsvConfig('/', '\''));
-```
-
-This configuration will be used during export and conversion to a String.
+- **SkCsvConfig**: Represents the configuration used for formatting CSV data, such as delimiter and quote.
 
 ## Examples
 
@@ -77,25 +49,13 @@ Therefore, we will add an annotation to designate the data that we want to expor
 public record BankAccount(@CsvColumn String bankName, @CsvColumn UUID uuid, @CsvColumn BigDecimal balance, int secretCode)
 ```
 
-Let's imagine that within the application, we have a way to obtain these records either as an Iterable or as an Iterator,
-as shown below.
+Let's imagine that within the application, we have a way to obtain these records as an Iterable, as shown below.
 
 ```java
-private static final Iterator<BankAccount> BANK_ACCOUNT_ITERATOR = new Iterator<>() {
+import java.util.Iterator;
 
-    private int index;
-
-    private static final Random RANDOM = new Random();
-
-    @Override
-    public boolean hasNext() {
-        return index < 1_000_000;
-    }
-
-    @Override
-    public BankAccount next() { ... }
-
-};
+private static final Iterable<BankAccount> BANK_ACCOUNT_ITERABLE = 
+        new Iterable<BankAccount>() {...};
 ```
 
 In terms of lines of code, we'll only need a single line ! The parser will take care of everything as usual;
@@ -106,7 +66,7 @@ not guaranteed!
 public final class Main {
     
     public static void main(String[] args) throws IOException {
-        SkCsvRecords.export(Paths.get("out.csv"), BANK_ACCOUNT_ITERATOR, SkCsvConfig.SEMICOLON);
+        SkCsvRecords.export(Paths.get("out.csv"), BANK_ACCOUNT_ITERABLE);
     }
 
 }
