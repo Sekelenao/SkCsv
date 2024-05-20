@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"fr.sekelenao.skcsv"},{"l":"fr.sekelenao.skcsv.exception"}];updateSearchResults();
