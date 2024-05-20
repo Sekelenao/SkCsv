@@ -539,7 +539,8 @@ final class SkCsvRowTest {
                     () -> {
                         row.set(0, "hello");
                         assertNotEquals(row, row2);
-                    }
+                    },
+                    () -> assertNotEquals(null, row)
             );
         }
 

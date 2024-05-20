@@ -429,10 +429,12 @@ public class SkCsvRow implements Iterable<String>, RandomAccess {
     }
 
     /**
-     * Creates a Spliterator for the elements in this SkCsvRow.
-     * The Spliterator traverses the elements of the row in the order they were added.
+     * Returns a {@code Spliterator} over the rows in this SkCsv instance.
      *
-     * @return a Spliterator for the elements in this row
+     * <p><strong>Note:</strong> The {@code Spliterator} provided by this method is {@link Spliterator#NONNULL},
+     * {@link Spliterator#SIZED}, and {@link Spliterator#ORDERED}.
+     *
+     * @return a {@code Spliterator} over the rows in this SkCsv instance
      */
     @Override
     public Spliterator<String> spliterator() {
@@ -477,17 +479,17 @@ public class SkCsvRow implements Iterable<String>, RandomAccess {
     }
 
     /**
-     * Indicates whether some other object is "equal to" this SkCsvRow.
-     * Two SkCsvRow objects are considered equal if they have the same size and contain the same elements in the same
-     * order.
+     * Indicates whether some other object is "equal to" this SkCsvRow instance.
+     *
+     * <p>This method returns {@code true} if the specified object is also a SkCsvRow instance,
+     * both instances have the same size, and all corresponding elements are equal.
+     * In other words, two SkCsvRow instances are defined to be equal if they contain the same elements in the same order.
      *
      * @param other the reference object with which to compare
-     * @return {@code true} if this row is the same as the other object, {@code false} otherwise
-     * @throws NullPointerException if the specified object is null
+     * @return {@code true} if this SkCsvRow instance is equal to the specified object, {@code false} otherwise
      */
     @Override
     public boolean equals(Object other) {
-        Objects.requireNonNull(other);
         if(other instanceof SkCsvRow otherRow && otherRow.size == size) {
             for (int i = 0; i < size; i++) {
                 if (!otherRow.cells[i].equals(cells[i])) return false;
