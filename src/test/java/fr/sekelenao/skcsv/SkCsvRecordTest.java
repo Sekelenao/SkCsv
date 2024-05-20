@@ -96,7 +96,7 @@ final class SkCsvRecordTest {
         @Test
         @DisplayName("Export with annotation and default methods")
         void exportWithAnnotation() throws IOException {
-            SkCsvRecords.export(PRODUCED_PATH, ANIMALS, SkCsvConfig.SEMICOLON, StandardOpenOption.CREATE);
+            SkCsvRecords.export(PRODUCED_PATH, ANIMALS, StandardOpenOption.CREATE);
             var csv = SkCsv.from(PRODUCED_PATH);
             assertAll("With annotation",
                     () -> assertEquals(3, csv.size()),
@@ -117,7 +117,7 @@ final class SkCsvRecordTest {
         }
 
         @Test
-        @DisplayName("Export with annotation and override methods")
+        @DisplayName("Export with annotation and override toString")
         void exportWithAnnotationOverride() throws IOException {
             SkCsvRecords.export(PRODUCED_PATH, FOODS, SkCsvConfig.SEMICOLON, StandardOpenOption.CREATE);
             var csv = SkCsv.from(PRODUCED_PATH);
