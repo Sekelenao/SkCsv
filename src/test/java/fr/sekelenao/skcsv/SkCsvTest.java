@@ -826,7 +826,8 @@ final class SkCsvTest {
                     () -> {
                         csv1.set(0, new SkCsvRow());
                         assertNotEquals(csv1, csv2);
-                    }
+                    },
+                    () -> assertNotEquals(null, csv1)
             );
         }
 
@@ -1044,7 +1045,7 @@ final class SkCsvTest {
                     new SkCsvRow("", "world", "\njump\n", "cool"),
                     new SkCsvRow("yeah", " ok", "")
             );
-            csv.export(path, StandardOpenOption.CREATE);
+            csv.export(path);
             assertEquals(Files.readString(path).replace("\r", ""), csv.toString());
             Files.deleteIfExists(path);
         }
