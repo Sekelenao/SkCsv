@@ -23,7 +23,7 @@ speed and security. The level of abstraction allows you to forget that you're wo
 
 - **SkCsvRow**: Represents a row in a CSV file. Provides methods for manipulating and accessing row data.
 - **SkCsv**: Represents a CSV file as a whole. Allows manipulation of file rows and operations such as adding, 
-removing, and exporting data.
+removing, importing and exporting data.
 
 ### 2. Classes for Record export
 
