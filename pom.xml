@@ -4,13 +4,34 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>fr.sekelenao</groupId>
+    <groupId>com.github.sekelenao</groupId>
     <artifactId>SkCsv</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>SkCsv</name>
-    <description>Simple library to manipulate Csv files</description>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>SkCsv is a library designed for easy data manipulation, simplifying the import and export processes.
+        You don't need to worry about special characters or other complexities during parsing. The focus has been
+        directed towards prioritizing speed and security. The level of abstraction allows you to forget that you're
+        working with a CSV format.
+    </description>
+    <url>https://github.com/Sekelenao/SkCsv</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Sekelenao</name>
+            <email>sekelenao@protonmail.com</email>
+            <organization>Sekelenao</organization>
+            <organizationUrl>https://github.com/Sekelenao/</organizationUrl>
+        </developer>
+    </developers>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
