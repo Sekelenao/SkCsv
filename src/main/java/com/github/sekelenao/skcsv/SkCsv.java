@@ -129,6 +129,17 @@ public class SkCsv implements Iterable<SkCsvRow> {
     }
 
     /**
+     * Adds a single row to the beginning of this SkCsv instance.
+     *
+     * @param row the row to be added
+     * @throws NullPointerException if the specified row is null
+     */
+    public void addFirst(SkCsvRow row){
+        Objects.requireNonNull(row);
+        internalRows.addFirst(row);
+    }
+
+    /**
      * Adds all specified rows to this SkCsv instance.
      * The provided array of rows is copied, so subsequent changes to the array do not affect this SkCsv instance.
      *

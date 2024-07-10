@@ -201,6 +201,34 @@ final class SkCsvTest {
         }
 
         @Test
+        @DisplayName("add first")
+        void addFirst() {
+            var csv = new SkCsv();
+            csv.addFirst(new SkCsvRow("Hello", "world", "!"));
+            assertAll("addFirst",
+                    () -> assertEquals(1, csv.size()),
+                    () -> assertEquals("Hello;world;!\n", csv.toString()),
+                    () -> assertEquals(new SkCsvRow("Hello", "world", "!"), csv.get(0)),
+                    () -> {
+                        csv.addFirst(new SkCsvRow("I", "love", "Java", ""));
+                        assertEquals("""
+                                        I;love;Java;
+                                        Hello;world;!
+                                        """
+                                , csv.toString());
+                    },
+                    () -> assertEquals(new SkCsvRow("Hello", "world", "!"), csv.get(1))
+            );
+        }
+
+        @Test
+        @DisplayName("addFirst null assertions")
+        void addFirstNullAssertions() {
+            var emptyCsv = new SkCsv();
+            assertThrows(NullPointerException.class, () -> emptyCsv.addFirst(null));
+        }
+
+        @Test
         @DisplayName("Insert")
         void insert() {
             var csv = new SkCsv();
