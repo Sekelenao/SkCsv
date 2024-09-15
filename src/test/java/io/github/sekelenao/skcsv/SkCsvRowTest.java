@@ -1,4 +1,4 @@
-package com.github.sekelenao.skcsv;
+package io.github.sekelenao.skcsv;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -323,16 +323,16 @@ final class SkCsvRowTest {
             }
         }
 
-        private static final SkCsvRow row = SkCsv.from(Collections.singleton("1;3;5;7;9")).getFirst();
+        private static final SkCsvRow ROW = SkCsv.from(Collections.singleton("1;3;5;7;9")).getFirst();
 
         @ParameterizedTest
         @ValueSource(ints = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
         @DisplayName("Contains basic tests")
         void contains(int value) {
             assertAll("Contains basic tests",
-                    () -> assertEquals((value & 1) == 1, row.contains(String.valueOf(value))),
-                    () -> assertFalse(row.contains(value)),
-                    () -> assertFalse(row.contains(null))
+                    () -> assertEquals((value & 1) == 1, ROW.contains(String.valueOf(value))),
+                    () -> assertFalse(ROW.contains(value)),
+                    () -> assertFalse(ROW.contains(null))
             );
         }
 

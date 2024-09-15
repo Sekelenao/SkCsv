@@ -1,6 +1,6 @@
-package com.github.sekelenao.skcsv;
+package io.github.sekelenao.skcsv;
 
-import com.github.sekelenao.skcsv.exception.CsvParsingException;
+import io.github.sekelenao.skcsv.exception.CsvParsingException;
 
 import java.util.Objects;
 

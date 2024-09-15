@@ -1,4 +1,4 @@
-package com.github.sekelenao.skcsv;
+package io.github.sekelenao.skcsv;
 
 import org.junit.jupiter.api.*;
 

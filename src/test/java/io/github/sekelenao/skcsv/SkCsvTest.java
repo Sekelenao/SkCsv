@@ -1,7 +1,7 @@
-package com.github.sekelenao.skcsv;
+package io.github.sekelenao.skcsv;
 
-import com.github.sekelenao.skcsv.exception.CsvParsingException;
-import com.github.sekelenao.skcsv.exception.InvalidCsvValueException;
+import io.github.sekelenao.skcsv.exception.CsvParsingException;
+import io.github.sekelenao.skcsv.exception.InvalidCsvValueException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,6 @@ import java.nio.file.OpenOption;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -35,7 +34,7 @@ final class SkCsvTest {
         return new SkCsv(
                 IntStream.range(0, lineNumber)
                         .mapToObj(i -> new SkCsvRow(String.valueOf(i)))
-                        .collect(Collectors.toList())
+                        .toList()
         );
     }
 

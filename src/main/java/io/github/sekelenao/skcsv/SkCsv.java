@@ -1,4 +1,4 @@
-package com.github.sekelenao.skcsv;
+package io.github.sekelenao.skcsv;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
