@@ -1,11 +1,11 @@
-<p align="center">
+<p style="text-align:center;">
   <img src="logoSK.svg" width="100" alt="logo">
 </p>
 
-<h1 align="center">
+<h1 style="text-align:center;">
   SkCsv library for Java 17+
 </h1>
-<h3 align="center">
+<h3 style="text-align:center;">
   Latest version : 1.0.0
 </h3>
 
