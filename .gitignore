@@ -4,6 +4,7 @@ bin/
 .idea/
 
 #FILES
+DefinitionOfDoneToDeploy.txt
 TODO.txt
 
 #PATTERNS
