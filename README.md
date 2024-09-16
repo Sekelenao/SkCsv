@@ -3,13 +3,8 @@
 </p>
 
 <h1 align="center">
-  SkCsv library for Java 17+ (PREVIEW)
+  SkCsv library for Java 17+
 </h1>
-
-## Warning
-
-Please note that the development of this library is still ongoing, and there are no assurances regarding potential
-changes to its structure or functionality in the future.
 
 ## Description
 
@@ -19,7 +14,7 @@ speed and security. The level of abstraction allows you to forget that you're wo
 
 ## SkCsv Library Architecture
 
-### 1. Classes for CSV File Manipulation
+### 1. Classes for CSV format manipulation
 
 - **SkCsvRow**: Represents a row in a CSV file. Provides methods for manipulating and accessing row data.
 - **SkCsv**: Represents a CSV file as a whole. Allows manipulation of file rows and operations such as adding, 
