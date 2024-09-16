@@ -5,12 +5,43 @@
 <h1 align="center">
   SkCsv library for Java 17+
 </h1>
+<h3 align="center">
+  Latest version : 1.0.0
+</h3>
 
 ## Description
 
 SkCsv is a library designed for easy data manipulation, simplifying the import and export processes. You don't need to 
 worry about special characters or other complexities during parsing. The focus has been directed towards prioritizing 
 speed and security. The level of abstraction allows you to forget that you're working with a CSV format. 
+
+## How to install
+
+### Using Maven
+
+You can use the following Maven dependency :
+
+```xml
+<dependency>
+  <groupId>io.github.sekelenao</groupId>
+  <artifactId>SkCsv</artifactId>
+  <version>{version}</version>
+</dependency>
+```
+
+### Using Gradle
+
+You can add the following Gradle dependency :
+
+```groovy
+implementation 'io.github.sekelenao:SkCsv:{version}'
+```
+
+### Using JAR files :
+
+You can download the JAR files (including Javadoc and classes) [here](https://github.com/Sekelenao/SkCsv/tree/main/jars).
+
+The next step is to consult the documentation of the build tool you are using to learn how to import dependencies correctly.
 
 ## SkCsv Library Architecture
 
@@ -30,6 +61,10 @@ Contains methods for managing object data export to a CSV file.
 ### 3. Utility Classes
 
 - **SkCsvConfig**: Represents the configuration used for formatting CSV data, such as delimiter and quote.
+
+## Documentation
+
+
 
 ## Examples
 
