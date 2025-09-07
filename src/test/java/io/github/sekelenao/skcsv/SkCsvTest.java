@@ -629,6 +629,15 @@ final class SkCsvTest {
     final class IterableTest {
 
         @Test
+        @DisplayName("Iterator is working for empty CSV")
+        void emptyIterator(){
+            var csv = new SkCsv();
+            for (var row : csv) {
+                fail("Empty CSV has no rows");
+            }
+        }
+
+        @Test
         @DisplayName("For each loop is working")
         void iterableFor() {
             var lst = new ArrayList<SkCsvRow>();

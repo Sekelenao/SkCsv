@@ -376,6 +376,15 @@ final class SkCsvRowTest {
     final class IterableTest {
 
         @Test
+        @DisplayName("Iterator is working for empty rows")
+        void iteratorIsWorkingForEmptyRows(){
+            var row = new SkCsvRow();
+            for(var ignored : row){
+                fail("Should not be called");
+            }
+        }
+
+        @Test
         @DisplayName("For each loop is working")
         void iterableFor() {
             var lst = new ArrayList<String>();

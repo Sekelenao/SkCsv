@@ -351,7 +351,7 @@ public class SkCsv implements Iterable<SkCsvRow> {
      * @throws IndexOutOfBoundsException if the index is out of range
      */
     public ListIterator<SkCsvRow> listIterator(int index) {
-        Objects.checkIndex(index, internalRows.size());
+        SkAssertions.positive(index);
         return new ListIterator<>() {
 
             private final ListIterator<SkCsvRow> lstItr = internalRows.listIterator(index);
